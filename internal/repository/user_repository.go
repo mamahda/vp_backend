@@ -11,8 +11,8 @@ type UserRepository struct {
 
 func (r *UserRepository) Create(user *domain.User) error {
 	_, err := r.DB.Exec(
-		"INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-		user.Name, user.Email, user.Password,
+		"INSERT INTO users (username, email, password, name, role_id) VALUES (?, ?, ?, ?, ?)",
+		user.Username, user.Email, user.Password, user.Name, 3,
 	)
 	return err
 }
@@ -24,7 +24,7 @@ func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
 	)
 
 	user := domain.User{}
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.Name, &user.Role_ID)
 	if err != nil {
 		return nil, err
 	}

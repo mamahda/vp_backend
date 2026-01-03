@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"log"
 
 	"vp_backend/internal/domain"
 	"vp_backend/internal/service"
@@ -19,6 +20,11 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	log.Println("Registering user:", req.Username)
+	log.Println("Email:", req.Email)
+	log.Println("Password:", req.Password)
+	log.Println("Name:", req.Name)
 
 	if err := h.AuthService.Register(&req); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
