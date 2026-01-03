@@ -1,21 +1,22 @@
 package http
 
 import (
-	"database/sql"
-
 	"github.com/gin-gonic/gin"
 
 	"vp_backend/internal/delivery/http/handler"
-	"vp_backend/internal/repository"
-	"vp_backend/internal/usecase"
+	"vp_backend/internal/delivery/http/middleware"
 )
 
-func RegisterRoutes(router *gin.Engine, db *sql.DB) {
-	// dependency injection
-	userRepo := repository.NewUserRepository()
-	userUsecase := usecase.NewUserUsecase(userRepo)
-	userHandler := handler.NewUserHandler(userUsecase)
+func RegisterRoutes(r *gin.Engine, auth *handler.AuthHandler) {
+	r.POST("/register", auth.Register)
+	r.POST("/login", auth.Login)
 
-	// routes
-	router.GET("/users", userHandler.GetUsers)
+	protected := r.Group("/api")
+	protected.Use(middleware.JWTAuth())
+	{
+		protected.GET("/profile", func(c *gin.Context) {
+			c.JSON(200, gin.H{"message": "authorized"})
+		})
+	}
 }
+

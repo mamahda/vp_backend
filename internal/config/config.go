@@ -11,7 +11,10 @@ func LoadEnv() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("No .env file found, using system env")
+		return
 	}
+
+	log.Println(".env file loaded successfully")
 }
 
 func GetEnv(key, defaultValue string) string {
@@ -20,4 +23,12 @@ func GetEnv(key, defaultValue string) string {
 		return defaultValue
 	}
 	return value
+}
+
+func GetJWT() string {
+	key := os.Getenv("JWT_SECRET")
+	if key == "" {
+		return "yoursecretkey"
+	}
+	return key;
 }
