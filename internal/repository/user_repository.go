@@ -19,7 +19,7 @@ func (r *UserRepository) Create(user *domain.User) error {
 
 func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
 	row := r.DB.QueryRow(
-		"SELECT id, name, email, password FROM users WHERE email = ?",
+		"SELECT id, username, email, password, name, role_id FROM users WHERE email = ?",
 		email,
 	)
 

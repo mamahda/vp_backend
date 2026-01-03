@@ -7,9 +7,13 @@ import (
 	"vp_backend/internal/delivery/http/middleware"
 )
 
-func RegisterRoutes(r *gin.Engine, auth *handler.AuthHandler) {
-	r.POST("/register", auth.Register)
-	r.POST("/login", auth.Login)
+type Handler struct {
+	AuthHandler *handler.AuthHandler
+}
+
+func RegisterRoutes(r *gin.Engine, h Handler) {
+	r.POST("/register", h.AuthHandler.Register)
+	r.POST("/login", h.AuthHandler.Login)
 
 	protected := r.Group("/api")
 	protected.Use(middleware.JWTAuth())

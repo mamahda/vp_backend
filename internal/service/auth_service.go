@@ -28,17 +28,17 @@ func (s *AuthService) Register(user *domain.User) error {
 	return s.UserRepo.Create(user)
 }
 
-func (s *AuthService) Login(email, password string) (string, error) {
+func (s *AuthService) Login(email, password string) (*domain.User ,string, error) {
 	user, err := s.UserRepo.FindByEmail(email)
 	if err != nil {
-		return "", errors.New("user not found")
+		return nil, "", errors.New("user not found")
 	}
 
 	if err := bcrypt.CompareHashAndPassword(
 		[]byte(user.Password),
 		[]byte(password),
 	); err != nil {
-		return "", errors.New("invalid password")
+		return nil, "", errors.New("invalid password")
 	}
 
 	claims := jwt.MapClaims{
@@ -48,6 +48,7 @@ func (s *AuthService) Login(email, password string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(config.GetJWT()))
+	stringToken, err := token.SignedString([]byte(config.GetJWT()))
+	return user, stringToken, err
 }
 

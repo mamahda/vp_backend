@@ -20,13 +20,17 @@ func main() {
 	db := config.InitDB()
 	defer db.Close()
 
+	r := gin.Default()
+
 	userRepo := &repository.UserRepository{DB: db}
 	authService := &service.AuthService{UserRepo: userRepo}
 	authHandler := &handler.AuthHandler{AuthService: authService}
 
-	r := gin.Default()
+	h := http.Handler{
+		AuthHandler: authHandler,
+	}
 
-	http.RegisterRoutes(r, authHandler)
+	http.RegisterRoutes(r, h)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
