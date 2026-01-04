@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
-
 	"vp_backend/internal/domain"
 	"vp_backend/internal/service"
 
@@ -21,13 +21,20 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	if err := h.AuthService.Register(&req); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		// Cek apakah errornya cocok dengan ErrEmailAlreadyExists
+		if errors.Is(err, domain.ErrEmailAlreadyExists) {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Default error untuk hal-hal tak terduga
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong"})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "register success",
-		"data": req,
+		"data":    req,
 	})
 }
 
@@ -53,4 +60,3 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		"user":  user,
 	})
 }
-

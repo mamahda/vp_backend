@@ -3,6 +3,8 @@ package repository
 import (
 	"database/sql"
 	"vp_backend/internal/domain"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 type UserRepository struct {
@@ -14,7 +16,16 @@ func (r *UserRepository) Create(user *domain.User) error {
 		"INSERT INTO users (username, email, password, name, role_id) VALUES (?, ?, ?, ?, ?)",
 		user.Username, user.Email, user.Password, user.Name, 3,
 	)
-	return err
+	if err != nil {
+		// Type assertion untuk menangkap error spesifik MySQL
+		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+			if mysqlErr.Number == 1062 {
+				return domain.ErrEmailAlreadyExists // Kembalikan error dari domain
+			}
+		}
+		return err
+	}
+	return nil
 }
 
 func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
@@ -31,4 +42,3 @@ func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
 
 	return &user, nil
 }
-
