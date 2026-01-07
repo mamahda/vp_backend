@@ -1,7 +1,7 @@
 package domain
 
 type PropertyImage struct {
-	ID 					int
-	Url 				string
-	Property_ID int
+	ID 					int			`json:"id"`
+	Url 				string	`json:"url"`
+	Property_ID int			`json:"property_id"`
 }
