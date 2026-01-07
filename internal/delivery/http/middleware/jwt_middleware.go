@@ -10,6 +10,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type JwtClaims struct {
+	UserID uint `json:"user_id"`
+	jwt.RegisteredClaims
+}
+
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		auth := c.GetHeader("Authorization")
@@ -19,7 +24,9 @@ func JWTAuth() gin.HandlerFunc {
 		}
 
 		tokenString := strings.Replace(auth, "Bearer ", "", 1)
-		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+
+		claims := &JwtClaims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 			return []byte(config.GetJWT()), nil
 		})
 
@@ -28,6 +35,8 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
+		c.Set("user_id", claims.UserID)
 		c.Next()
 	}
 }
+

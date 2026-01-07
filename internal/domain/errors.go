@@ -2,7 +2,6 @@ package domain
 
 import "errors"
 
-// Variabel error
 var (
 	ErrEmailAlreadyExists = errors.New("email already registered")
 	ErrUserNotFound       = errors.New("user not found")

@@ -9,6 +9,7 @@ import (
 
 type Handler struct {
 	AuthHandler *handler.AuthHandler
+	UserHandler *handler.UserHandler
 }
 
 func RegisterRoutes(r *gin.Engine, h Handler) {
@@ -18,9 +19,7 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 	protected := r.Group("/api")
 	protected.Use(middleware.JWTAuth())
 	{
-		protected.GET("/profile", func(c *gin.Context) {
-			c.JSON(200, gin.H{"message": "authorized"})
-		})
+		protected.GET("/profile", h.UserHandler.GetProfile)
 	}
 }
 

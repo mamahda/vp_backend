@@ -26,8 +26,12 @@ func main() {
 	authService := &service.AuthService{UserRepo: userRepo}
 	authHandler := &handler.AuthHandler{AuthService: authService}
 
+	userService := &service.UserService{UserRepo: userRepo}
+	userHandler := &handler.UserHandler{UserService: userService}
+
 	h := http.Handler{
 		AuthHandler: authHandler,
+		UserHandler: userHandler,
 	}
 
 	http.RegisterRoutes(r, h)
