@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"vp_backend/internal/domain"
 	"vp_backend/internal/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 type PropertyHandler struct {
@@ -79,4 +80,3 @@ func (h *PropertyHandler) Delete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "service deleted"})
 }
-

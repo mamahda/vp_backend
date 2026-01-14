@@ -10,7 +10,6 @@ import (
 	"vp_backend/internal/repository"
 	"vp_backend/internal/service"
 
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,10 +32,15 @@ func main() {
 	propertyService := &service.PropertyService{PropertyRepo: propertyRepo}
 	propertyHandler := &handler.PropertyHandler{PropertyService: propertyService}
 
+	favoriteRepo := &repository.FavoriteRepository{DB: db}
+	favoriteService := &service.FavoriteService{FavoriteRepo: favoriteRepo}
+	favoriteHandler := &handler.FavoriteHandler{FavoriteService: favoriteService}
+
 	h := http.Handler{
-		AuthHandler: authHandler,
-		UserHandler: userHandler,
+		AuthHandler:     authHandler,
+		UserHandler:     userHandler,
 		PropertyHandler: propertyHandler,
+		FavoriteHandler: favoriteHandler,
 	}
 
 	http.RegisterRoutes(r, h)

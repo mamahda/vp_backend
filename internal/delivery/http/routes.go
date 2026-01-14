@@ -8,16 +8,17 @@ import (
 )
 
 type Handler struct {
-	AuthHandler *handler.AuthHandler
-	UserHandler *handler.UserHandler
+	AuthHandler     *handler.AuthHandler
+	UserHandler     *handler.UserHandler
 	PropertyHandler *handler.PropertyHandler
+	FavoriteHandler *handler.FavoriteHandler
 }
 
 func RegisterRoutes(r *gin.Engine, h Handler) {
 	api := r.Group("/api")
 	api.POST("/register", h.AuthHandler.Register)
 	api.POST("/login", h.AuthHandler.Login)
-	api.GET("/properties", h.PropertyHandler.GetAll) 
+	api.GET("/properties", h.PropertyHandler.GetAll)
 	api.GET("/properties/:id", h.PropertyHandler.GetByID)
 
 	protected := api
@@ -25,10 +26,10 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 	{
 		protected.GET("/profile", h.UserHandler.GetProfile)
 		protected.PUT("/profile", h.UserHandler.UpdateProfile)
-		
-		protected.POST("/properties/:id/favorite", h.PropertyHandler.AddToFavorites)
-		protected.DELETE("/properties/:id/favorite", h.PropertyHandler.RemoveFromFavorites)
-		protected.GET("/favorites", h.PropertyHandler.GetFavoriteProperties)
+
+		protected.POST("/properties/:id/favorite", h.FavoriteHandler.AddToFavorites)
+		protected.DELETE("/properties/:id/favorite", h.FavoriteHandler.RemoveFromFavorites)
+		protected.GET("/favorites", h.FavoriteHandler.GetFavoriteProperties)
 
 		protectedAdmin := protected.Group("/agent")
 		protectedAdmin.Use(middleware.AdminAuth())
@@ -39,4 +40,3 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 		}
 	}
 }
-

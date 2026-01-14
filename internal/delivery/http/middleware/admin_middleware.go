@@ -17,7 +17,7 @@ func AdminAuth() gin.HandlerFunc {
 		}
 
 		userService := c.MustGet("user_service").(*service.UserService)
-		user, err := userService.GetUser(c.Request.Context(), int(userID.(uint)))
+		user, err := userService.Get(c.Request.Context(), int(userID.(uint)))
 		if err != nil || user == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
 			return

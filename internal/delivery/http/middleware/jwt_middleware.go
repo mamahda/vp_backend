@@ -11,7 +11,7 @@ import (
 )
 
 type JwtClaims struct {
-	UserID uint `json:"user_id"`
+	UserID int `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
@@ -39,5 +39,3 @@ func JWTAuth() gin.HandlerFunc {
 		c.Next()
 	}
 }
-
-

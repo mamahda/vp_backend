@@ -8,6 +8,12 @@ INSERT INTO property_types (id, name) VALUES
 (2, 'Apartment'),
 (3, 'Land');
 
+INSERT INTO users (email, password, username, phone_number, role_id) 
+VALUES 
+('budi.agent@victoria.com', '$2a$10$Q4x/ZViUI0hQJLuVG7v1ZudEVPlImaIqyWf3bhYBZWAStjlyj6rUK', 'Budi Santoso', '081234567890', 2),
+('siti.agent@victoria.com', '$2a$10$Q4x/ZViUI0hQJLuVG7v1ZudEVPlImaIqyWf3bhYBZWAStjlyj6rUK', 'Siti Aminah', '081298765432', 2),
+('andi.agent@victoria.com', '$2a$10$Q4x/ZViUI0hQJLuVG7v1ZudEVPlImaIqyWf3bhYBZWAStjlyj6rUK', 'Andi Wijaya', '081311223344', 2);
+
 INSERT INTO properties (
     title,
     description,
@@ -54,7 +60,7 @@ INSERT INTO properties (
     2018,
     NOW(),
     1,
-    11
+    1
 ),
 (
     'Apartemen Fully Furnished',
@@ -78,7 +84,7 @@ INSERT INTO properties (
     2020,
     NOW(),
     2,
-    11
+    1
 ),
 (
     'Rumah Klasik dengan Halaman Luas',
@@ -102,8 +108,8 @@ INSERT INTO properties (
     2015,
     NOW(),
     1,
-    11
+    1
 );
 
 insert into users (email, password, username, phone_number, role_id) values 
-('admin@admin.com', '$2a$10$UBCeBHKUVi8YyUvPlUVq/O12Cgju3M/XweUgIuQJ9mf72nf2kvzei', 'adminuser', '1234567890', 1);
+('admin@admin.com', '$2a$10$Q4x/ZViUI0hQJLuVG7v1ZudEVPlImaIqyWf3bhYBZWAStjlyj6rUK', 'adminuser', '1234567890', 1);
