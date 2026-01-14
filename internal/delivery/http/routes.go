@@ -10,16 +10,29 @@ import (
 type Handler struct {
 	AuthHandler *handler.AuthHandler
 	UserHandler *handler.UserHandler
+	PropertyHandler *handler.PropertyHandler
 }
 
 func RegisterRoutes(r *gin.Engine, h Handler) {
-	r.POST("/register", h.AuthHandler.Register)
-	r.POST("/login", h.AuthHandler.Login)
+	api := r.Group("/api")
+	api.POST("/register", h.AuthHandler.Register)
+	api.POST("/login", h.AuthHandler.Login)
+	api.GET("/properties", h.PropertyHandler.GetAll) 
+	api.GET("/properties/:id", h.PropertyHandler.GetByID)
 
-	protected := r.Group("/api")
+	protected := api
 	protected.Use(middleware.JWTAuth())
 	{
 		protected.GET("/profile", h.UserHandler.GetProfile)
+
+
+		protectedAdmin := protected.Group("/agent")
+		protectedAdmin.Use(middleware.AdminAuth())
+		{
+			protectedAdmin.POST("/properties", h.PropertyHandler.Create)
+			protectedAdmin.PUT("/properties/:id", h.PropertyHandler.Update)
+			protectedAdmin.DELETE("/properties/:id", h.PropertyHandler.Delete)
+		}
 	}
 }
 

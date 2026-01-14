@@ -26,7 +26,7 @@ func JWTAuth() gin.HandlerFunc {
 		tokenString := strings.Replace(auth, "Bearer ", "", 1)
 
 		claims := &JwtClaims{}
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (any, error) {
 			return []byte(config.GetJWT()), nil
 		})
 

@@ -20,15 +20,13 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	if err := h.AuthService.Register(&req); err != nil {
-		// Cek apakah errornya cocok dengan ErrEmailAlreadyExists
+	if err := h.AuthService.Register(c.Request.Context(), &req); err != nil {
 		if errors.Is(err, domain.ErrEmailAlreadyExists) {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Default error untuk hal-hal tak terduga
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -49,7 +47,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	user, token, err := h.AuthService.Login(req.Email, req.Password)
+	user, token, err := h.AuthService.Login(c.Request.Context(), req.Email, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return

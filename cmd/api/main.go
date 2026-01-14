@@ -29,9 +29,14 @@ func main() {
 	userService := &service.UserService{UserRepo: userRepo}
 	userHandler := &handler.UserHandler{UserService: userService}
 
+	propertyRepo := &repository.PropertyRepository{DB: db}
+	propertyService := &service.PropertyService{PropertyRepo: propertyRepo}
+	propertyHandler := &handler.PropertyHandler{PropertyService: propertyService}
+
 	h := http.Handler{
 		AuthHandler: authHandler,
 		UserHandler: userHandler,
+		PropertyHandler: propertyHandler,
 	}
 
 	http.RegisterRoutes(r, h)

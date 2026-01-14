@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"time"
+	"context"
 
 	"vp_backend/internal/config"
 	"vp_backend/internal/domain"
@@ -16,7 +17,7 @@ type AuthService struct {
 	UserRepo *repository.UserRepository
 }
 
-func (s *AuthService) Register(user *domain.User) error {
+func (s *AuthService) Register(ctx context.Context, user *domain.User) error {
 	hashed, err := bcrypt.GenerateFromPassword(
 		[]byte(user.Password), bcrypt.DefaultCost,
 	)
@@ -25,11 +26,11 @@ func (s *AuthService) Register(user *domain.User) error {
 	}
 
 	user.Password = string(hashed)
-	return s.UserRepo.Create(user)
+	return s.UserRepo.Create(ctx, user)
 }
 
-func (s *AuthService) Login(email, password string) (*domain.User ,string, error) {
-	user, err := s.UserRepo.FindByEmail(email)
+func (s *AuthService) Login(ctx context.Context, email, password string) (*domain.User ,string, error) {
+	user, err := s.UserRepo.FindByEmail(ctx, email)
 	if err != nil {
 		return nil, "", errors.New("user not found")
 	}
