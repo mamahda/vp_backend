@@ -24,7 +24,11 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 	protected.Use(middleware.JWTAuth())
 	{
 		protected.GET("/profile", h.UserHandler.GetProfile)
-
+		protected.PUT("/profile", h.UserHandler.UpdateProfile)
+		
+		protected.POST("/properties/:id/favorite", h.PropertyHandler.AddToFavorites)
+		protected.DELETE("/properties/:id/favorite", h.PropertyHandler.RemoveFromFavorites)
+		protected.GET("/favorites", h.PropertyHandler.GetFavoriteProperties)
 
 		protectedAdmin := protected.Group("/agent")
 		protectedAdmin.Use(middleware.AdminAuth())
