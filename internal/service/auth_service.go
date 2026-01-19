@@ -1,9 +1,9 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"time"
-	"context"
 
 	"vp_backend/internal/config"
 	"vp_backend/internal/domain"
@@ -13,23 +13,58 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// AuthService berisi business logic
+// yang berkaitan dengan autentikasi user,
+// seperti register dan login.
 type AuthService struct {
 	UserRepo *repository.UserRepository
 }
 
-func (s *AuthService) Register(ctx context.Context, user *domain.User) error {
-	hashed, err := bcrypt.GenerateFromPassword(
-		[]byte(user.Password), bcrypt.DefaultCost,
+// Register melakukan proses registrasi user baru.
+//
+// Alur:
+// 1. Password di-hash menggunakan bcrypt
+// 2. Data user disimpan ke database melalui repository
+//
+// Error yang mungkin:
+// - error dari bcrypt
+// - domain.ErrEmailAlreadyExists (dari repository)
+func (s *AuthService) Register(
+	ctx context.Context,
+	user *domain.User,
+) error {
+
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(user.Password),
+		bcrypt.DefaultCost,
 	)
 	if err != nil {
 		return err
 	}
 
-	user.Password = string(hashed)
+	user.Password = string(hashedPassword)
+
 	return s.UserRepo.Create(ctx, user)
 }
 
-func (s *AuthService) Login(ctx context.Context, email, password string) (*domain.User ,string, error) {
+// Login memverifikasi kredensial user dan
+// menghasilkan JWT token jika berhasil.
+//
+// Alur:
+// 1. Cari user berdasarkan email
+// 2. Bandingkan password plaintext dengan hash bcrypt
+// 3. Generate JWT token dengan expired 24 jam
+//
+// Return:
+// - data user
+// - JWT token (string)
+// - error jika gagal
+func (s *AuthService) Login(
+	ctx context.Context,
+	email string,
+	password string,
+) (*domain.User, string, error) {
+
 	user, err := s.UserRepo.FindByEmail(ctx, email)
 	if err != nil {
 		return nil, "", errors.New("user not found")
@@ -49,7 +84,11 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (*domai
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	stringToken, err := token.SignedString([]byte(config.GetJWT()))
+
+	stringToken, err := token.SignedString(
+		[]byte(config.GetJWT()),
+	)
+
 	return user, stringToken, err
 }
 

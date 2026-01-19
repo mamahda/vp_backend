@@ -3,38 +3,94 @@ package repository
 import (
 	"context"
 	"database/sql"
+
 	"vp_backend/internal/domain"
 )
 
+// FavoriteRepository bertanggung jawab untuk
+// mengelola interaksi database yang berkaitan
+// dengan fitur properti favorit user.
 type FavoriteRepository struct {
 	DB *sql.DB
 }
 
-func (r *FavoriteRepository) Add(ctx context.Context, userID int, propertyID int) error {
+// Add menyimpan relasi antara user dan properti
+// ke dalam tabel favorites.
+//
+// Parameter:
+// - ctx        : context untuk kontrol lifecycle query
+// - userID     : ID user
+// - propertyID : ID properti
+//
+// Return:
+// - error jika proses insert gagal
+func (r *FavoriteRepository) Add(
+	ctx context.Context,
+	userID int,
+	propertyID int,
+) error {
+
 	query := `
 		INSERT INTO favorites (user_id, property_id) 
 		VALUES (?, ?);
 	`
-	_, err := r.DB.ExecContext(ctx, query,
-		userID, propertyID,
+
+	_, err := r.DB.ExecContext(
+		ctx,
+		query,
+		userID,
+		propertyID,
 	)
 
 	return err
 }
 
-func (r *FavoriteRepository) Remove(ctx context.Context, userID int, propertyID int) error {
+// Remove menghapus relasi antara user dan properti
+// dari tabel favorites.
+//
+// Parameter:
+// - ctx        : context untuk kontrol lifecycle query
+// - userID     : ID user
+// - propertyID : ID properti
+//
+// Return:
+// - error jika proses delete gagal
+func (r *FavoriteRepository) Remove(
+	ctx context.Context,
+	userID int,
+	propertyID int,
+) error {
+
 	query := `
 		DELETE FROM favorites 
 		WHERE user_id = ? AND property_id = ?;
 	`
-	_, err := r.DB.ExecContext(ctx, query,
-		userID, propertyID,
+
+	_, err := r.DB.ExecContext(
+		ctx,
+		query,
+		userID,
+		propertyID,
 	)
 
 	return err
 }
 
-func (r *FavoriteRepository) FindAll(ctx context.Context, userID int) ([]domain.Property, error) {
+// FindAll mengambil seluruh properti
+// yang difavoritkan oleh user.
+//
+// Parameter:
+// - ctx    : context untuk kontrol lifecycle query
+// - userID : ID user
+//
+// Return:
+// - slice domain.Property
+// - error jika proses query gagal
+func (r *FavoriteRepository) FindAll(
+	ctx context.Context,
+	userID int,
+) ([]domain.Property, error) {
+
 	query := `
         SELECT 
             p.id, p.title, p.description, p.price, p.status,
@@ -56,6 +112,7 @@ func (r *FavoriteRepository) FindAll(ctx context.Context, userID int) ([]domain.
 	defer rows.Close()
 
 	var properties []domain.Property
+
 	for rows.Next() {
 		var p domain.Property
 		if err := rows.Scan(
@@ -69,8 +126,10 @@ func (r *FavoriteRepository) FindAll(ctx context.Context, userID int) ([]domain.
 		); err != nil {
 			return nil, err
 		}
+
 		properties = append(properties, p)
 	}
 
 	return properties, nil
 }
+

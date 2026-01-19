@@ -13,29 +13,63 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// main merupakan entry point aplikasi backend Victoria Property.
+// Fungsi ini bertanggung jawab untuk:
+// - Memuat konfigurasi environment
+// - Menginisialisasi database
+// - Menyusun dependency (repository, service, handler)
+// - Mendaftarkan HTTP routes
+// - Menjalankan HTTP server
 func main() {
+
+	// Memuat variabel environment dari file .env
 	config.LoadEnv()
 
+	// Inisialisasi koneksi database
 	db := config.InitDB()
 	defer db.Close()
 
+	// Inisialisasi Gin HTTP server dengan default middleware
+	// (logger dan recovery)
 	r := gin.Default()
 
+	// ==========================
+	// REPOSITORY INITIALIZATION
+	// ==========================
+
+	// Repository bertanggung jawab untuk interaksi langsung
+	// dengan database
 	userRepo := &repository.UserRepository{DB: db}
-	authService := &service.AuthService{UserRepo: userRepo}
-	authHandler := &handler.AuthHandler{AuthService: authService}
-
-	userService := &service.UserService{UserRepo: userRepo}
-	userHandler := &handler.UserHandler{UserService: userService}
-
 	propertyRepo := &repository.PropertyRepository{DB: db}
-	propertyService := &service.PropertyService{PropertyRepo: propertyRepo}
-	propertyHandler := &handler.PropertyHandler{PropertyService: propertyService}
-
 	favoriteRepo := &repository.FavoriteRepository{DB: db}
+
+	// ==========================
+	// SERVICE INITIALIZATION
+	// ==========================
+
+	// Service berisi business logic aplikasi
+	authService := &service.AuthService{UserRepo: userRepo}
+	userService := &service.UserService{UserRepo: userRepo}
+	propertyService := &service.PropertyService{PropertyRepo: propertyRepo}
 	favoriteService := &service.FavoriteService{FavoriteRepo: favoriteRepo}
+
+	// ==========================
+	// HANDLER INITIALIZATION
+	// ==========================
+
+	// Handler berfungsi sebagai layer HTTP
+	// yang menangani request dan response
+	authHandler := &handler.AuthHandler{AuthService: authService}
+	userHandler := &handler.UserHandler{UserService: userService}
+	propertyHandler := &handler.PropertyHandler{PropertyService: propertyService}
 	favoriteHandler := &handler.FavoriteHandler{FavoriteService: favoriteService}
 
+	// ==========================
+	// ROUTE REGISTRATION
+	// ==========================
+
+	// Menggabungkan seluruh handler ke dalam
+	// satu struct untuk kebutuhan routing
 	h := http.Handler{
 		AuthHandler:     authHandler,
 		UserHandler:     userHandler,
@@ -43,13 +77,22 @@ func main() {
 		FavoriteHandler: favoriteHandler,
 	}
 
+	// Mendaftarkan seluruh endpoint API
 	http.RegisterRoutes(r, h)
 
+	// ==========================
+	// SERVER STARTUP
+	// ==========================
+
+	// Mengambil port dari environment variable
 	port := os.Getenv("APP_PORT")
 	if port == "" {
 		port = "8080"
 	}
 
 	fmt.Println("Server running on port", port)
+
+	// Menjalankan HTTP server
 	r.Run(":" + port)
 }
+

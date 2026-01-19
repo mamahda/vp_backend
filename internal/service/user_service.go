@@ -3,19 +3,39 @@ package service
 import (
 	"context"
 
-	"vp_backend/internal/repository"
 	"vp_backend/internal/domain"
+	"vp_backend/internal/repository"
 )
 
+// UserService menangani business logic
+// yang berkaitan dengan data dan profil user.
 type UserService struct {
 	UserRepo *repository.UserRepository
 }
 
-func (s *UserService) Get(ctx context.Context, id int) (*domain.User, error) {
+// Get mengambil data user berdasarkan ID.
+func (s *UserService) Get(
+	ctx context.Context,
+	id int,
+) (*domain.User, error) {
+
 	return s.UserRepo.FindByID(ctx, id)
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, id int, username, email, phone string) error {
+// UpdateUser memperbarui data profil user.
+//
+// Alur:
+// 1. Ambil data user berdasarkan ID
+// 2. Perbarui field yang diizinkan
+// 3. Simpan perubahan ke database
+func (s *UserService) UpdateUser(
+	ctx context.Context,
+	id int,
+	username string,
+	email string,
+	phone string,
+) error {
+
 	user, err := s.UserRepo.FindByID(ctx, id)
 	if err != nil {
 		return err
@@ -27,3 +47,4 @@ func (s *UserService) UpdateUser(ctx context.Context, id int, username, email, p
 
 	return s.UserRepo.Update(ctx, user)
 }
+

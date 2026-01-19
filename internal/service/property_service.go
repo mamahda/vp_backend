@@ -7,23 +7,52 @@ import (
 	"vp_backend/internal/repository"
 )
 
+// PropertyService menangani business logic
+// yang berkaitan dengan data properti.
 type PropertyService struct {
 	PropertyRepo *repository.PropertyRepository
 }
 
-func (s *PropertyService) Create(ctx context.Context, p *domain.Property) error {
+// Create menyimpan data properti baru ke database.
+func (s *PropertyService) Create(
+	ctx context.Context,
+	p *domain.Property,
+) error {
+
 	return s.PropertyRepo.Create(ctx, p)
 }
 
-func (s *PropertyService) GetByID(ctx context.Context, id int) (*domain.Property, error) {
+// GetByID mengambil detail properti
+// berdasarkan ID properti.
+func (s *PropertyService) GetByID(
+	ctx context.Context,
+	id int,
+) (*domain.Property, error) {
+
 	return s.PropertyRepo.FindByID(ctx, id)
 }
 
-func (s *PropertyService) GetAll(ctx context.Context) ([]domain.Property, error) {
+// GetAll mengambil seluruh data properti
+// tanpa filter atau pagination.
+func (s *PropertyService) GetAll(
+	ctx context.Context,
+) ([]domain.Property, error) {
+
 	return s.PropertyRepo.FindAll(ctx)
 }
 
-func (s *PropertyService) GetFilteredProperty(ctx context.Context, f *domain.PropertyFilters) ([]domain.Property, int, error) {
+// GetFilteredProperty mengambil daftar properti
+// berdasarkan filter, sorting, dan pagination.
+//
+// Validasi yang dilakukan:
+// - Page minimal 1
+// - Limit default 10
+// - Limit maksimal 100
+func (s *PropertyService) GetFilteredProperty(
+	ctx context.Context,
+	f *domain.PropertyFilters,
+) ([]domain.Property, int, error) {
+
 	if f.Page <= 0 {
 		f.Page = 1
 	}
@@ -34,15 +63,29 @@ func (s *PropertyService) GetFilteredProperty(ctx context.Context, f *domain.Pro
 		f.Limit = 100
 	}
 
+	// Hitung offset untuk pagination
 	f.Offset = (f.Page - 1) * f.Limit
 
 	return s.PropertyRepo.FindFiltered(ctx, f)
 }
 
-func (s *PropertyService) Update(ctx context.Context, p *domain.Property) error {
+// Update memperbarui data properti
+// berdasarkan ID.
+func (s *PropertyService) Update(
+	ctx context.Context,
+	p *domain.Property,
+) error {
+
 	return s.PropertyRepo.Update(ctx, p)
 }
 
-func (s *PropertyService) Delete(ctx context.Context, id int) error {
+// Delete menghapus data properti
+// berdasarkan ID.
+func (s *PropertyService) Delete(
+	ctx context.Context,
+	id int,
+) error {
+
 	return s.PropertyRepo.Delete(ctx, id)
 }
+
