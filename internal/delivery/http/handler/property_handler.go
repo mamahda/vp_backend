@@ -29,6 +29,34 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "PropertyService created"})
 }
 
+func (h *PropertyHandler) GetProperties(c *gin.Context) {
+	var filters domain.PropertyFilters
+
+	if err := c.ShouldBindQuery(&filters); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Format parameter tidak valid",
+			"details": err.Error(),
+		})
+		return
+	}
+	data, total, err := h.PropertyService.GetFilteredProperty(c.Request.Context(), &filters)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    data,
+		"meta": gin.H{
+			"total_count":  total,
+			"current_page": filters.Page,
+			"limit":        filters.Limit,
+			"total_pages":  (total + filters.Limit - 1) / filters.Limit,
+		},
+	})
+}
+
 func (h *PropertyHandler) GetAll(c *gin.Context) {
 	properties, err := h.PropertyService.GetAll(c.Request.Context())
 	if err != nil {

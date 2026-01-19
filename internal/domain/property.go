@@ -6,7 +6,7 @@ type Property struct {
 	ID              int       `json:"id"`
 	Title           string    `json:"title"`
 	Description     string    `json:"description"`
-	Price           int       `json:"price"`
+	Price           int64     `json:"price"`
 	Status          int       `json:"status"`
 	Province        string    `json:"province"`
 	Regency         string    `json:"regency"`
@@ -23,6 +23,7 @@ type Property struct {
 	Carport         int       `json:"carport"`
 	Certificate     string    `json:"certificate"`
 	YearConstructed int       `json:"year_constructed"`
+	SaleType        string    `json:"sale_type"`
 	CreatedAt       time.Time `json:"created_at"`
 	PropertyTypeId  int       `json:"property_type_id"`
 	UserId          int       `json:"user_id"`

@@ -18,7 +18,8 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 	api := r.Group("/api")
 	api.POST("/register", h.AuthHandler.Register)
 	api.POST("/login", h.AuthHandler.Login)
-	api.GET("/properties", h.PropertyHandler.GetAll)
+	api.GET("/properties", h.PropertyHandler.GetProperties)
+	api.GET("/properties/all", h.PropertyHandler.GetAll)
 	api.GET("/properties/:id", h.PropertyHandler.GetByID)
 
 	protected := api
