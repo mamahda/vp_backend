@@ -36,7 +36,7 @@ func AdminAuth() gin.HandlerFunc {
 		// Mengambil data user berdasarkan user_id
 		user, err := userService.Get(
 			c.Request.Context(),
-			int(userID.(uint)),
+			userID.(int),
 		)
 		if err != nil || user == nil {
 			c.AbortWithStatusJSON(
@@ -59,4 +59,3 @@ func AdminAuth() gin.HandlerFunc {
 		c.Next()
 	}
 }
-

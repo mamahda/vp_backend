@@ -59,6 +59,64 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 	)
 }
 
+func (h *PropertyHandler) UploadImages(c *gin.Context) {
+	propertyId, _ := strconv.Atoi(c.Param("id"))
+
+	// 1. Ambil file dari request
+	form, err := c.MultipartForm()
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid form"})
+		return
+	}
+	files := form.File["images"]
+
+	// 2. Panggil Service (Passing context standar Go)
+	err = h.PropertyService.AddPropertyImages(c.Request.Context(), propertyId, files)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "Upload Berhasil"})
+}
+
+func (h *PropertyHandler) GetCountData(c *gin.Context) {
+	// Binding query parameter ke struct filter
+	var filters domain.PropertyFilters
+	if err := c.ShouldBindQuery(&filters); err != nil {
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error":   "invalid query parameter format",
+				"details": err.Error(),
+			},
+		)
+		return
+	}
+
+	// Menghitung properti berdasarkan filter
+	total, err := h.PropertyService.GetCountData(
+		c.Request.Context(),
+		&filters,
+	)
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": err.Error()},
+		)
+		return
+	}
+
+	// Response sukses
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"success":     true,
+			"total_count": total,
+		},
+	)
+}
+
 // GetProperties mengambil daftar properti
 // berdasarkan filter dan pagination.
 //
@@ -85,7 +143,7 @@ func (h *PropertyHandler) GetProperties(c *gin.Context) {
 	}
 
 	// Mengambil properti berdasarkan filter
-	data, total, err := h.PropertyService.GetFilteredProperty(
+	data, err := h.PropertyService.GetFilteredProperty(
 		c.Request.Context(),
 		&filters,
 	)
@@ -104,10 +162,8 @@ func (h *PropertyHandler) GetProperties(c *gin.Context) {
 			"success": true,
 			"data":    data,
 			"meta": gin.H{
-				"total_count":  total,
 				"current_page": filters.Page,
 				"limit":        filters.Limit,
-				"total_pages":  (total + filters.Limit - 1) / filters.Limit,
 			},
 		},
 	)
@@ -252,4 +308,3 @@ func (h *PropertyHandler) Delete(c *gin.Context) {
 		gin.H{"message": "property deleted successfully"},
 	)
 }
-

@@ -47,6 +47,7 @@ create table if not exists properties (
     year_constructed int not null,
     sale_type varchar(20) not null,
     created_at timestamp default current_timestamp,
+    cover_image_url varchar (100), 
     property_type_id int not null,
     agent_id int not null,
 
@@ -59,7 +60,7 @@ create table if not exists property_images (
     url varchar(255) not null,
     property_id int not null,
 
-    foreign key (property_id) references properties(id)
+    foreign key (property_id) references properties(id) on delete cascade
 );
 
 create table if not exists favorites (
@@ -67,6 +68,6 @@ create table if not exists favorites (
     user_id int not null,
     property_id int not null,
 
-    foreign key (user_id) references users(id),
-    foreign key (property_id) references properties(id)
+    foreign key (user_id) references users(id) on delete cascade,
+    foreign key (property_id) references properties(id) on delete cascade
 );

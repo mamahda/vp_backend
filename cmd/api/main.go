@@ -9,6 +9,7 @@ import (
 	"vp_backend/internal/delivery/http/handler"
 	"vp_backend/internal/repository"
 	"vp_backend/internal/service"
+	"vp_backend/internal/storage"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,6 +35,13 @@ func main() {
 	r := gin.Default()
 
 	// ==========================
+	// STATIC FILES (GLOBAL)
+	// ==========================
+	r.Static("/static", "./public/uploads")
+
+	propertyStorage := storage.NewLocalStorage("./public/uploads", "/static")
+
+	// ==========================
 	// REPOSITORY INITIALIZATION
 	// ==========================
 
@@ -50,7 +58,7 @@ func main() {
 	// Service berisi business logic aplikasi
 	authService := &service.AuthService{UserRepo: userRepo}
 	userService := &service.UserService{UserRepo: userRepo}
-	propertyService := &service.PropertyService{PropertyRepo: propertyRepo}
+	propertyService := &service.PropertyService{PropertyRepo: propertyRepo, Storage: propertyStorage}
 	favoriteService := &service.FavoriteService{FavoriteRepo: favoriteRepo}
 
 	// ==========================
@@ -63,6 +71,15 @@ func main() {
 	userHandler := &handler.UserHandler{UserService: userService}
 	propertyHandler := &handler.PropertyHandler{PropertyService: propertyService}
 	favoriteHandler := &handler.FavoriteHandler{FavoriteService: favoriteService}
+
+	// ==========================
+	// INJECT SERVICES TO CONTEXT
+	// ==========================
+	r.Use(func(c *gin.Context) {
+		// Set user_service ke context agar bisa diakses middleware
+		c.Set("user_service", userService)
+		c.Next()
+	})
 
 	// ==========================
 	// ROUTE REGISTRATION
@@ -95,4 +112,3 @@ func main() {
 	// Menjalankan HTTP server
 	r.Run(":" + port)
 }
-

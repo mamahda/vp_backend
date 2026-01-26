@@ -9,7 +9,7 @@ package domain
 type PropertyFilters struct {
 
 	// Jenis transaksi properti (jual / sewa)
-	SaleType string `form:"sale_type" binding:"required"`
+	SaleType string `form:"sale_type"`
 
 	// ID jenis properti (rumah, apartemen, dll)
 	PropertyTypeID int `form:"property_type_id"`
@@ -33,6 +33,9 @@ type PropertyFilters struct {
 	// Jenis sertifikat properti
 	Certificate string `form:"certificate"`
 
+	// Filter keyword judul/deksripsi
+	Keyword string `form:"keyword"`
+
 	// Opsi pengurutan data
 	// Contoh:
 	// - price_asc
@@ -48,4 +51,3 @@ type PropertyFilters struct {
 	// (tidak diambil dari request)
 	Offset int `form:"-"`
 }
-

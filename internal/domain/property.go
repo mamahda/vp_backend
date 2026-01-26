@@ -51,11 +51,11 @@ type Property struct {
 	// jual / sewa
 	SaleType string `json:"sale_type"`
 
-	// Relasi
-	PropertyTypeId int `json:"property_type_id"`
-	UserId         int `json:"user_id"`
-
 	// Metadata
 	CreatedAt time.Time `json:"created_at"`
-}
 
+	// Relasi
+	CoverImageUrl  string `json:"cover_image_url"`
+	PropertyTypeId int    `json:"property_type_id"`
+	UserId         int    `json:"user_id"`
+}

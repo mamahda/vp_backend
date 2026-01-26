@@ -52,6 +52,12 @@ func (r *PropertyRepository) Create(
 	return err
 }
 
+func (r *PropertyRepository) SaveImage(ctx context.Context, propertyID int, url string) error {
+	query := "INSERT INTO property_images (url, property_id) VALUES (?, ?)"
+	_, err := r.DB.ExecContext(ctx, query, url, propertyID)
+	return err
+}
+
 // FindByID mengambil satu data properti
 // berdasarkan ID.
 //
@@ -77,7 +83,7 @@ func (r *PropertyRepository) FindByID(
 		&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 		&p.Floors, &p.Garage, &p.Carport,
 		&p.Certificate, &p.YearConstructed, &p.SaleType,
-		&p.CreatedAt, &p.PropertyTypeId, &p.UserId,
+		&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
 	)
 
 	if err == sql.ErrNoRows {
@@ -85,6 +91,17 @@ func (r *PropertyRepository) FindByID(
 	}
 
 	return &p, err
+}
+
+func (r *PropertyRepository) CountData(
+	ctx context.Context,
+	f *domain.PropertyFilters,
+) (int, error) {
+	var count int
+	whereClause, args := r.buildWhereClause(f)
+	query := "SELECT COUNT(*) FROM properties" + whereClause
+	err := r.DB.QueryRowContext(ctx, query, args...).Scan(&count)
+	return count, err
 }
 
 // FindFiltered mengambil daftar properti
@@ -97,18 +114,9 @@ func (r *PropertyRepository) FindByID(
 func (r *PropertyRepository) FindFiltered(
 	ctx context.Context,
 	f *domain.PropertyFilters,
-) ([]domain.Property, int, error) {
+) ([]domain.Property, error) {
 
 	whereClause, args := r.buildWhereClause(f)
-
-	totalCount, err := r.getCount(ctx, whereClause, args)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count properties: %w", err)
-	}
-
-	if totalCount == 0 {
-		return []domain.Property{}, 0, nil
-	}
 
 	query := fmt.Sprintf(
 		"SELECT * FROM properties %s %s LIMIT ? OFFSET ?",
@@ -120,7 +128,7 @@ func (r *PropertyRepository) FindFiltered(
 
 	rows, err := r.DB.QueryContext(ctx, query, queryArgs...)
 	if err != nil {
-		return nil, 0, fmt.Errorf("query error: %w", err)
+		return nil, fmt.Errorf("query error: %w", err)
 	}
 	defer rows.Close()
 
@@ -134,14 +142,14 @@ func (r *PropertyRepository) FindFiltered(
 			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 			&p.Floors, &p.Garage, &p.Carport,
 			&p.Certificate, &p.YearConstructed, &p.SaleType,
-			&p.CreatedAt, &p.PropertyTypeId, &p.UserId,
+			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
 		); err != nil {
-			return nil, 0, fmt.Errorf("scan error: %w", err)
+			return nil, fmt.Errorf("scan error: %w", err)
 		}
 		properties = append(properties, p)
 	}
 
-	return properties, totalCount, nil
+	return properties, nil
 }
 
 // buildWhereClause membangun klausa WHERE
@@ -200,25 +208,18 @@ func (r *PropertyRepository) buildWhereClause(
 		addCondition("land_area", "<=", f.MaxLandArea)
 	}
 
+	// Filter keyword
+	if f.Keyword != "" {
+		searchPattern := "%" + f.Keyword + "%"
+		conditions = append(conditions, "(title LIKE ? OR description LIKE ?)")
+		args = append(args, searchPattern, searchPattern)
+	}
+
 	if len(conditions) == 0 {
 		return "", args
 	}
 
 	return " WHERE " + strings.Join(conditions, " AND "), args
-}
-
-// getCount mengambil total data
-// berdasarkan filter (tanpa LIMIT & OFFSET).
-func (r *PropertyRepository) getCount(
-	ctx context.Context,
-	where string,
-	args []interface{},
-) (int, error) {
-
-	var count int
-	query := "SELECT COUNT(*) FROM properties" + where
-	err := r.DB.QueryRowContext(ctx, query, args...).Scan(&count)
-	return count, err
 }
 
 // buildOrderClause menentukan
@@ -259,7 +260,7 @@ func (r *PropertyRepository) FindAll(
 			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 			&p.Floors, &p.Garage, &p.Carport,
 			&p.Certificate, &p.YearConstructed, &p.SaleType,
-			&p.CreatedAt, &p.PropertyTypeId, &p.UserId,
+			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
 		); err != nil {
 			return nil, err
 		}
@@ -293,7 +294,7 @@ func (r *PropertyRepository) Update(
 		p.LandArea, p.Electricity, p.WaterSource,
 		p.Bedrooms, p.Bathrooms, p.Floors,
 		p.Garage, p.Carport, p.Certificate,
-		p.YearConstructed, p.SaleType, p.PropertyTypeId, p.ID,
+		p.YearConstructed, p.SaleType, p.CoverImageUrl, p.PropertyTypeId, p.ID,
 	)
 
 	return err
@@ -309,4 +310,3 @@ func (r *PropertyRepository) Delete(
 	_, err := r.DB.ExecContext(ctx, `DELETE FROM properties WHERE id = ?`, id)
 	return err
 }
-

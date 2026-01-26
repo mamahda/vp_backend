@@ -2,15 +2,18 @@ package service
 
 import (
 	"context"
+	"mime/multipart"
 
 	"vp_backend/internal/domain"
 	"vp_backend/internal/repository"
+	"vp_backend/internal/storage"
 )
 
 // PropertyService menangani business logic
 // yang berkaitan dengan data properti.
 type PropertyService struct {
 	PropertyRepo *repository.PropertyRepository
+	Storage      storage.Storage
 }
 
 // Create menyimpan data properti baru ke database.
@@ -20,6 +23,22 @@ func (s *PropertyService) Create(
 ) error {
 
 	return s.PropertyRepo.Create(ctx, p)
+}
+
+func (s *PropertyService) AddPropertyImages(ctx context.Context, propertyId int, files []*multipart.FileHeader) error {
+	for _, file := range files {
+		// STEP A: Simpan file ke disk (panggil storage domain)
+		webURL, err := s.Storage.Upload(file, "properties")
+		if err != nil {
+			return err
+		}
+
+		// STEP B: Simpan URL ke database (panggil repo)
+		if err := s.PropertyRepo.SaveImage(ctx, propertyId, webURL); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // GetByID mengambil detail properti
@@ -41,6 +60,13 @@ func (s *PropertyService) GetAll(
 	return s.PropertyRepo.FindAll(ctx)
 }
 
+func (s *PropertyService) GetCountData(
+	ctx context.Context,
+	f *domain.PropertyFilters,
+) (int, error) {
+	return s.PropertyRepo.CountData(ctx, f)
+}
+
 // GetFilteredProperty mengambil daftar properti
 // berdasarkan filter, sorting, dan pagination.
 //
@@ -51,7 +77,7 @@ func (s *PropertyService) GetAll(
 func (s *PropertyService) GetFilteredProperty(
 	ctx context.Context,
 	f *domain.PropertyFilters,
-) ([]domain.Property, int, error) {
+) ([]domain.Property, error) {
 
 	if f.Page <= 0 {
 		f.Page = 1
@@ -88,4 +114,3 @@ func (s *PropertyService) Delete(
 
 	return s.PropertyRepo.Delete(ctx, id)
 }
-

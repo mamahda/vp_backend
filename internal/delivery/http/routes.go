@@ -41,6 +41,10 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 	// dengan dukungan query filter (price, location, dll)
 	api.GET("/properties", h.PropertyHandler.GetProperties)
 
+	// Endpoint untuk mengambil jumlah daftar properti
+	// dengan dukungan query filter (price, location, dll)
+	api.GET("/properties/count", h.PropertyHandler.GetCountData)
+
 	// Endpoint untuk mengambil seluruh properti tanpa filter
 	api.GET("/properties/all", h.PropertyHandler.GetAll)
 
@@ -84,6 +88,8 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 			// (hanya dapat diakses oleh agent/admin)
 			protectedAdmin.POST("/properties", h.PropertyHandler.Create)
 
+			protectedAdmin.POST("/properties/:id/images", h.PropertyHandler.UploadImages)
+
 			// Endpoint untuk memperbarui data properti berdasarkan ID
 			protectedAdmin.PUT("/properties/:id", h.PropertyHandler.Update)
 
@@ -92,4 +98,3 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 		}
 	}
 }
-
