@@ -6,7 +6,6 @@ import (
 	"vp_backend/internal/service"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/text/message"
 )
 
 // UserHandler menangani HTTP request
@@ -31,7 +30,10 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	if !exists {
 		c.JSON(
 			http.StatusUnauthorized,
-			gin.H{"error": "unauthorized"},
+			gin.H{
+				"success": false,
+				"message": "unauthorized",
+			},
 		)
 		return
 	}
@@ -44,7 +46,10 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": "failed to get user profile"},
+			gin.H{
+				"success": false,
+				"message": "failed to get user profile",
+			},
 		)
 		return
 	}
@@ -53,9 +58,8 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{
-			"message": message.NewPrinter(
-				message.MatchLanguage("en"),
-			).Sprintf("User profile retrieved successfully"),
+			"success": true,
+			"message": "User profile retrieved successfully",
 			"data": gin.H{
 				"id":       profile.ID,
 				"username": profile.Username,
@@ -89,7 +93,10 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	if !exists {
 		c.JSON(
 			http.StatusUnauthorized,
-			gin.H{"error": "unauthorized"},
+			gin.H{
+				"success": false,
+				"message": "unauthorized",
+			},
 		)
 		return
 	}
@@ -105,7 +112,10 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": "invalid request"},
+			gin.H{
+				"success": false,
+				"message": "invalid request",
+			},
 		)
 		return
 	}
@@ -121,7 +131,10 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": "failed to update user profile"},
+			gin.H{
+				"success": false,
+				"message": "failed to update user profile",
+			},
 		)
 		return
 	}
@@ -130,10 +143,8 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{
-			"message": message.NewPrinter(
-				message.MatchLanguage("en"),
-			).Sprintf("User profile updated successfully"),
+			"success": true,
+			"message": "User profile updated successfully",
 		},
 	)
 }
-

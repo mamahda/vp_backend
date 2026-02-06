@@ -36,7 +36,10 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -51,7 +54,10 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		if errors.Is(err, domain.ErrEmailAlreadyExists) {
 			c.JSON(
 				http.StatusConflict,
-				gin.H{"error": err.Error()},
+				gin.H{
+					"success": false,
+					"message": err.Error(),
+				},
 			)
 			return
 		}
@@ -59,7 +65,9 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		// Error lainnya
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error()},
 		)
 		return
 	}
@@ -68,8 +76,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	c.JSON(
 		http.StatusCreated,
 		gin.H{
+			"success": true,
 			"message": "register success",
-			"data":    req,
 		},
 	)
 }
@@ -97,7 +105,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error()},
 		)
 		return
 	}
@@ -111,7 +121,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusUnauthorized,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error()},
 		)
 		return
 	}
@@ -120,9 +132,12 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{
-			"token": token,
-			"user":  user,
+			"success": true,
+			"message": "login success",
+			"data": gin.H{
+				"token": token,
+				"user":  user,
+			},
 		},
 	)
 }
-

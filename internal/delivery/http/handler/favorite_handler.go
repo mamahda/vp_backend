@@ -35,7 +35,10 @@ func (h *FavoriteHandler) AddToFavorites(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": "invalid property ID"},
+			gin.H{
+				"success": false,
+				"message": "invalid property ID",
+			},
 		)
 		return
 	}
@@ -45,7 +48,10 @@ func (h *FavoriteHandler) AddToFavorites(c *gin.Context) {
 	if !exists {
 		c.JSON(
 			http.StatusUnauthorized,
-			gin.H{"error": "unauthorized"},
+			gin.H{
+				"success": false,
+				"message": "unauthorized",
+			},
 		)
 		return
 	}
@@ -59,7 +65,10 @@ func (h *FavoriteHandler) AddToFavorites(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -68,6 +77,7 @@ func (h *FavoriteHandler) AddToFavorites(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{
+			"success": true,
 			"message": "property added to favorites successfully",
 		},
 	)
@@ -93,7 +103,10 @@ func (h *FavoriteHandler) RemoveFromFavorites(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": "invalid property ID"},
+			gin.H{
+				"success": false,
+				"message": "invalid property ID",
+			},
 		)
 		return
 	}
@@ -103,7 +116,10 @@ func (h *FavoriteHandler) RemoveFromFavorites(c *gin.Context) {
 	if !exists {
 		c.JSON(
 			http.StatusUnauthorized,
-			gin.H{"error": "unauthorized"},
+			gin.H{
+				"success": false,
+				"message": "unauthorized",
+			},
 		)
 		return
 	}
@@ -117,7 +133,10 @@ func (h *FavoriteHandler) RemoveFromFavorites(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -126,6 +145,7 @@ func (h *FavoriteHandler) RemoveFromFavorites(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{
+			"success": true,
 			"message": "property removed from favorites successfully",
 		},
 	)
@@ -147,7 +167,10 @@ func (h *FavoriteHandler) GetFavoriteProperties(c *gin.Context) {
 	if !exists {
 		c.JSON(
 			http.StatusUnauthorized,
-			gin.H{"error": "unauthorized"},
+			gin.H{
+				"success": false,
+				"message": "unauthorized",
+			},
 		)
 		return
 	}
@@ -160,7 +183,10 @@ func (h *FavoriteHandler) GetFavoriteProperties(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -168,7 +194,12 @@ func (h *FavoriteHandler) GetFavoriteProperties(c *gin.Context) {
 	// Response sukses
 	c.JSON(
 		http.StatusOK,
-		properties,
+		gin.H{
+			"success": true,
+			"message": "get all user favorite property",
+			"data": gin.H{
+				"property": properties,
+			},
+		},
 	)
 }
-

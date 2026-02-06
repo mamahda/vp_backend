@@ -25,7 +25,9 @@ func AdminAuth() gin.HandlerFunc {
 		if !exists {
 			c.AbortWithStatusJSON(
 				http.StatusUnauthorized,
-				gin.H{"error": "user not authenticated"},
+				gin.H{
+					"success": false,
+					"message": "user not authenticated"},
 			)
 			return
 		}
@@ -41,7 +43,10 @@ func AdminAuth() gin.HandlerFunc {
 		if err != nil || user == nil {
 			c.AbortWithStatusJSON(
 				http.StatusUnauthorized,
-				gin.H{"error": "user not found"},
+				gin.H{
+					"success": false,
+					"message": "user not found",
+				},
 			)
 			return
 		}
@@ -50,7 +55,10 @@ func AdminAuth() gin.HandlerFunc {
 		if !user.IsAdmin() {
 			c.AbortWithStatusJSON(
 				http.StatusForbidden,
-				gin.H{"error": "admin access required"},
+				gin.H{
+					"success": false,
+					"message": "admin access required",
+				},
 			)
 			return
 		}

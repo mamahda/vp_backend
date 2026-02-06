@@ -40,7 +40,10 @@ func JWTAuth() gin.HandlerFunc {
 		if auth == "" {
 			c.AbortWithStatusJSON(
 				http.StatusUnauthorized,
-				gin.H{"error": "missing token"},
+				gin.H{
+					"success": false,
+					"message": "missing token",
+				},
 			)
 			return
 		}
@@ -63,7 +66,10 @@ func JWTAuth() gin.HandlerFunc {
 		if err != nil || !token.Valid {
 			c.AbortWithStatusJSON(
 				http.StatusUnauthorized,
-				gin.H{"error": "invalid token"},
+				gin.H{
+					"success": false,
+					"message": "invalid token",
+				},
 			)
 			return
 		}
@@ -76,4 +82,3 @@ func JWTAuth() gin.HandlerFunc {
 		c.Next()
 	}
 }
-

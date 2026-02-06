@@ -80,21 +80,21 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 		// ==========================
 
 		// Group route khusus agent/admin
-		protectedAdmin := protected.Group("/agent")
-		protectedAdmin.Use(middleware.AdminAuth())
+		protectedAgent := protected.Group("/agent")
+		protectedAgent.Use(middleware.AdminAuth())
 		{
 
 			// Endpoint untuk menambahkan properti baru
 			// (hanya dapat diakses oleh agent/admin)
-			protectedAdmin.POST("/properties", h.PropertyHandler.Create)
+			protectedAgent.POST("/properties", h.PropertyHandler.Create)
 
-			protectedAdmin.POST("/properties/:id/images", h.PropertyHandler.UploadImages)
+			protectedAgent.POST("/properties/:id/images", h.PropertyHandler.UploadImages)
 
 			// Endpoint untuk memperbarui data properti berdasarkan ID
-			protectedAdmin.PUT("/properties/:id", h.PropertyHandler.Update)
+			protectedAgent.PUT("/properties/:id", h.PropertyHandler.Update)
 
 			// Endpoint untuk menghapus properti berdasarkan ID
-			protectedAdmin.DELETE("/properties/:id", h.PropertyHandler.Delete)
+			protectedAgent.DELETE("/properties/:id", h.PropertyHandler.Delete)
 		}
 	}
 }

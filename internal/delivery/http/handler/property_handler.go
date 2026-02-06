@@ -35,7 +35,10 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 	if err := c.ShouldBindJSON(&property); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -47,7 +50,10 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 	); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -55,7 +61,10 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 	// Response sukses
 	c.JSON(
 		http.StatusCreated,
-		gin.H{"message": "property created successfully"},
+		gin.H{
+			"success": true,
+			"message": "property created successfully",
+		},
 	)
 }
 
@@ -65,7 +74,13 @@ func (h *PropertyHandler) UploadImages(c *gin.Context) {
 	// 1. Ambil file dari request
 	form, err := c.MultipartForm()
 	if err != nil {
-		c.JSON(400, gin.H{"error": "Invalid form"})
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"success": false,
+				"message": "Invalid form",
+			},
+		)
 		return
 	}
 	files := form.File["images"]
@@ -73,11 +88,22 @@ func (h *PropertyHandler) UploadImages(c *gin.Context) {
 	// 2. Panggil Service (Passing context standar Go)
 	err = h.PropertyService.AddPropertyImages(c.Request.Context(), propertyId, files)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
 		return
 	}
 
-	c.JSON(200, gin.H{"message": "Upload Berhasil"})
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"success": true,
+			"message": "Upload Berhasil",
+		},
+	)
 }
 
 func (h *PropertyHandler) GetCountData(c *gin.Context) {
@@ -87,8 +113,8 @@ func (h *PropertyHandler) GetCountData(c *gin.Context) {
 		c.JSON(
 			http.StatusBadRequest,
 			gin.H{
-				"error":   "invalid query parameter format",
-				"details": err.Error(),
+				"success": false,
+				"message": "invalid query parameter format",
 			},
 		)
 		return
@@ -102,7 +128,10 @@ func (h *PropertyHandler) GetCountData(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -111,8 +140,11 @@ func (h *PropertyHandler) GetCountData(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{
-			"success":     true,
-			"total_count": total,
+			"success": true,
+			"message": "get number of available property",
+			"data": gin.H{
+				"count": total,
+			},
 		},
 	)
 }
@@ -135,8 +167,8 @@ func (h *PropertyHandler) GetProperties(c *gin.Context) {
 		c.JSON(
 			http.StatusBadRequest,
 			gin.H{
-				"error":   "invalid query parameter format",
-				"details": err.Error(),
+				"success": false,
+				"message": "invalid query parameter format",
 			},
 		)
 		return
@@ -150,7 +182,10 @@ func (h *PropertyHandler) GetProperties(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -160,6 +195,7 @@ func (h *PropertyHandler) GetProperties(c *gin.Context) {
 		http.StatusOK,
 		gin.H{
 			"success": true,
+			"message": "get property data with filter and pagination",
 			"data":    data,
 			"meta": gin.H{
 				"current_page": filters.Page,
@@ -181,14 +217,22 @@ func (h *PropertyHandler) GetAll(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error()},
 		)
 		return
 	}
 
 	c.JSON(
 		http.StatusOK,
-		properties,
+		gin.H{
+			"success": true,
+			"message": "data all available property",
+			"data": gin.H{
+				"property": properties,
+			},
+		},
 	)
 }
 
@@ -213,14 +257,23 @@ func (h *PropertyHandler) GetByID(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusNotFound,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
 
 	c.JSON(
 		http.StatusOK,
-		property,
+		gin.H{
+			"success": true,
+			"message": "get property by ID",
+			"data": gin.H{
+				"property": property,
+			},
+		},
 	)
 }
 
@@ -249,7 +302,10 @@ func (h *PropertyHandler) Update(c *gin.Context) {
 	if err := c.ShouldBindJSON(&property); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
@@ -264,14 +320,19 @@ func (h *PropertyHandler) Update(c *gin.Context) {
 	); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error()},
 		)
 		return
 	}
 
 	c.JSON(
 		http.StatusOK,
-		gin.H{"message": "property updated successfully"},
+		gin.H{
+			"success": true,
+			"message": "property updated successfully",
+		},
 	)
 }
 
@@ -298,13 +359,19 @@ func (h *PropertyHandler) Delete(c *gin.Context) {
 	); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": err.Error()},
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			},
 		)
 		return
 	}
 
 	c.JSON(
 		http.StatusOK,
-		gin.H{"message": "property deleted successfully"},
+		gin.H{
+			"success": true,
+			"message": "property deleted successfully",
+		},
 	)
 }
