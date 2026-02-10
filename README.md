@@ -58,7 +58,7 @@ Each layer has a single responsibility and is loosely coupled.
 ## Authentication
 
 * JWT-based authentication
-* Token valid for **24 hours**
+* Token valid for **7 days**
 * `Authorization: Bearer <token>`
 
 ---
@@ -77,4 +77,3 @@ go run cmd/api/main.go
 * Passwords are hashed using bcrypt
 * Admin-only routes protected via middleware
 * Pagination max limit: **100**
-
