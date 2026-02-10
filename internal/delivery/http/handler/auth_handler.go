@@ -136,7 +136,12 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			"message": "login success",
 			"data": gin.H{
 				"token": token,
-				"user":  user,
+				"user": gin.H{
+					"email":        user.Email,
+					"username":     user.Username,
+					"phone_number": user.Phone,
+					"role":         user.Role_ID,
+				},
 			},
 		},
 	)
