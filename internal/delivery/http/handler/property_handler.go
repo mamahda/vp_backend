@@ -108,22 +108,23 @@ func (h *PropertyHandler) UploadImages(c *gin.Context) {
 
 func (h *PropertyHandler) GetCountData(c *gin.Context) {
 	// Binding query parameter ke struct filter
-	var filters domain.PropertyFilters
-	if err := c.ShouldBindQuery(&filters); err != nil {
-		c.JSON(
-			http.StatusBadRequest,
-			gin.H{
-				"success": false,
-				"message": "invalid query parameter format",
-			},
-		)
-		return
+	filters := new(domain.PropertyFilters)
+	if err := c.ShouldBindQuery(filters); err != nil {
+		// c.JSON(
+		// 	http.StatusBadRequest,
+		// 	gin.H{
+		// 		"success": false,
+		// 		"message": "invalid query parameter format",
+		// 	},
+		// )
+		// return
+		filters = nil
 	}
 
 	// Menghitung properti berdasarkan filter
 	total, err := h.PropertyService.GetCountData(
 		c.Request.Context(),
-		&filters,
+		filters,
 	)
 	if err != nil {
 		c.JSON(

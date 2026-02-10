@@ -58,6 +58,79 @@ func (r *PropertyRepository) SaveImage(ctx context.Context, propertyID int, url 
 	return err
 }
 
+// FindAll mengambil seluruh data properti
+// tanpa filter.
+func (r *PropertyRepository) FindAll(
+	ctx context.Context,
+) ([]domain.Property, error) {
+
+	rows, err := r.DB.QueryContext(ctx, `SELECT * FROM properties`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var properties []domain.Property
+	for rows.Next() {
+		var p domain.Property
+		if err := rows.Scan(
+			&p.ID, &p.Title, &p.Description, &p.Price, &p.Status,
+			&p.Province, &p.Regency, &p.District, &p.Address,
+			&p.BuildingArea, &p.LandArea, &p.Electricity,
+			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
+			&p.Floors, &p.Garage, &p.Carport,
+			&p.Certificate, &p.YearConstructed, &p.SaleType,
+			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
+		); err != nil {
+			return nil, err
+		}
+		properties = append(properties, p)
+	}
+
+	return properties, nil
+}
+
+// Update memperbarui data properti
+// berdasarkan ID.
+func (r *PropertyRepository) Update(
+	ctx context.Context,
+	p *domain.Property,
+) error {
+
+	query := `
+		UPDATE properties SET
+		title=?, description=?, price=?, status=?, province=?, regency=?,
+		district=?, address=?, building_area=?, land_area=?, electricity=?,
+		water_source=?, bedrooms=?, bathrooms=?, floors=?, garage=?, carport=?,
+		certificate=?, year_constructed=?, sale_type=?, property_type_id=?
+		WHERE id=?
+	`
+
+	_, err := r.DB.ExecContext(
+		ctx,
+		query,
+		p.Title, p.Description, p.Price, p.Status, p.Province,
+		p.Regency, p.District, p.Address, p.BuildingArea,
+		p.LandArea, p.Electricity, p.WaterSource,
+		p.Bedrooms, p.Bathrooms, p.Floors,
+		p.Garage, p.Carport, p.Certificate,
+		p.YearConstructed, p.SaleType, p.CoverImageUrl, p.PropertyTypeId, p.ID,
+	)
+
+	return err
+}
+
+// Delete menghapus data properti
+// berdasarkan ID.
+func (r *PropertyRepository) Delete(
+	ctx context.Context,
+	id int,
+) error {
+
+	_, err := r.DB.ExecContext(ctx, `DELETE FROM properties WHERE id = ?`, id)
+	return err
+}
+
 // FindByID mengambil satu data properti
 // berdasarkan ID.
 //
@@ -93,13 +166,17 @@ func (r *PropertyRepository) FindByID(
 	return &p, err
 }
 
-func (r *PropertyRepository) CountData(
-	ctx context.Context,
-	f *domain.PropertyFilters,
-) (int, error) {
+func (r *PropertyRepository) CountData(ctx context.Context, f *domain.PropertyFilters) (int, error) {
 	var count int
-	whereClause, args := r.buildWhereClause(f)
-	query := "SELECT COUNT(*) FROM properties" + whereClause
+	query := "SELECT COUNT(*) FROM properties"
+	var args []interface{}
+
+	if f != nil {
+		whereClause, whereArgs := r.buildWhereClause(f)
+		query += whereClause
+		args = whereArgs
+	}
+
 	err := r.DB.QueryRowContext(ctx, query, args...).Scan(&count)
 	return count, err
 }
@@ -236,77 +313,4 @@ func (r *PropertyRepository) buildOrderClause(sortBy string) string {
 	}
 
 	return "ORDER BY created_at DESC, id DESC"
-}
-
-// FindAll mengambil seluruh data properti
-// tanpa filter.
-func (r *PropertyRepository) FindAll(
-	ctx context.Context,
-) ([]domain.Property, error) {
-
-	rows, err := r.DB.QueryContext(ctx, `SELECT * FROM properties`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var properties []domain.Property
-	for rows.Next() {
-		var p domain.Property
-		if err := rows.Scan(
-			&p.ID, &p.Title, &p.Description, &p.Price, &p.Status,
-			&p.Province, &p.Regency, &p.District, &p.Address,
-			&p.BuildingArea, &p.LandArea, &p.Electricity,
-			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
-			&p.Floors, &p.Garage, &p.Carport,
-			&p.Certificate, &p.YearConstructed, &p.SaleType,
-			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
-		); err != nil {
-			return nil, err
-		}
-		properties = append(properties, p)
-	}
-
-	return properties, nil
-}
-
-// Update memperbarui data properti
-// berdasarkan ID.
-func (r *PropertyRepository) Update(
-	ctx context.Context,
-	p *domain.Property,
-) error {
-
-	query := `
-		UPDATE properties SET
-		title=?, description=?, price=?, status=?, province=?, regency=?,
-		district=?, address=?, building_area=?, land_area=?, electricity=?,
-		water_source=?, bedrooms=?, bathrooms=?, floors=?, garage=?, carport=?,
-		certificate=?, year_constructed=?, sale_type=?, property_type_id=?
-		WHERE id=?
-	`
-
-	_, err := r.DB.ExecContext(
-		ctx,
-		query,
-		p.Title, p.Description, p.Price, p.Status, p.Province,
-		p.Regency, p.District, p.Address, p.BuildingArea,
-		p.LandArea, p.Electricity, p.WaterSource,
-		p.Bedrooms, p.Bathrooms, p.Floors,
-		p.Garage, p.Carport, p.Certificate,
-		p.YearConstructed, p.SaleType, p.CoverImageUrl, p.PropertyTypeId, p.ID,
-	)
-
-	return err
-}
-
-// Delete menghapus data properti
-// berdasarkan ID.
-func (r *PropertyRepository) Delete(
-	ctx context.Context,
-	id int,
-) error {
-
-	_, err := r.DB.ExecContext(ctx, `DELETE FROM properties WHERE id = ?`, id)
-	return err
 }
