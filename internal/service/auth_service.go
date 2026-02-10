@@ -80,7 +80,7 @@ func (s *AuthService) Login(
 	claims := jwt.MapClaims{
 		"user_id": user.ID,
 		"email":   user.Email,
-		"exp":     time.Now().Add(24 * time.Hour).Unix(),
+		"exp":     time.Now().Add(7 * 24 * time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -91,4 +91,3 @@ func (s *AuthService) Login(
 
 	return user, stringToken, err
 }
-
