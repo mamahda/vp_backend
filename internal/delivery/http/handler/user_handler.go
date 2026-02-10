@@ -41,7 +41,7 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	// Mengambil data profil user melalui service
 	profile, err := h.UserService.Get(
 		c.Request.Context(),
-		int(userID.(uint)),
+		userID.(int),
 	)
 	if err != nil {
 		c.JSON(
