@@ -26,14 +26,22 @@ func (s *PropertyService) Create(
 }
 
 func (s *PropertyService) AddPropertyImages(ctx context.Context, propertyId int, files []*multipart.FileHeader) error {
-	for _, file := range files {
+	for i, file := range files {
 		// STEP A: Simpan file ke disk (panggil storage domain)
 		webURL, err := s.Storage.Upload(file, "properties")
 		if err != nil {
 			return err
 		}
 
-		// STEP B: Simpan URL ke database (panggil repo)
+		// STEP B: Jika ini adalah foto pertama (indeks 0), update tabel 'properties'
+		if i == 0 {
+			// Kita panggil repo untuk update kolom cover_image_url di tabel utama
+			if err := s.PropertyRepo.UpdateCoverImage(ctx, propertyId, webURL); err != nil {
+				return err
+			}
+		}
+
+		// STEP C: Simpan SEMUA URL ke tabel galeri 'property_images' (untuk slider/detail)
 		if err := s.PropertyRepo.SaveImage(ctx, propertyId, webURL); err != nil {
 			return err
 		}

@@ -43,6 +43,9 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 		return
 	}
 
+	userID := c.GetInt("user_id")
+	property.AgentId = userID
+
 	// Memproses pembuatan properti melalui service
 	if err := h.PropertyService.Create(
 		c.Request.Context(),

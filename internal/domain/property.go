@@ -15,33 +15,33 @@ type Property struct {
 	ID int `json:"id"`
 
 	// Informasi utama
-	Title       string `json:"title"`
+	Title       string `json:"title" binding:"required"`
 	Description string `json:"description"`
-	Price       int64  `json:"price"`
+	Price       int64  `json:"price" binding:"required"`
 
 	// Status properti
 	// Contoh:
 	// 0 = Draft
 	// 1 = Published
 	// 2 = Sold / Rented
-	Status int `json:"status"`
+	Status int `json:"status" binding:"oneof=0 1 2"`
 
 	// Lokasi
-	Province string `json:"province"`
-	Regency  string `json:"regency"`
-	District string `json:"district"`
+	Province string `json:"province" binding:"required"`
+	Regency  string `json:"regency" binding:"required"`
+	District string `json:"district" binding:"required"`
 	Address  string `json:"address"`
 
 	// Spesifikasi properti
-	BuildingArea int `json:"building_area"` // m²
-	LandArea     int `json:"land_area"`     // m²
-	Electricity  int `json:"electricity"`   // VA
-	WaterSource  int `json:"water_source"`  // enum / code
-	Bedrooms     int `json:"bedrooms"`
-	Bathrooms    int `json:"bathrooms"`
-	Floors       int `json:"floors"`
-	Garage       int `json:"garage"`
-	Carport      int `json:"carport"`
+	BuildingArea int    `json:"building_area"` // m²
+	LandArea     int    `json:"land_area"`     // m²
+	Electricity  int    `json:"electricity"`   // VA
+	WaterSource  string `json:"water_source"`  // enum / code
+	Bedrooms     int    `json:"bedrooms"`
+	Bathrooms    int    `json:"bathrooms"`
+	Floors       int    `json:"floors"`
+	Garage       int    `json:"garage"`
+	Carport      int    `json:"carport"`
 
 	// Legalitas & detail tambahan
 	Certificate     string `json:"certificate"`
@@ -49,13 +49,13 @@ type Property struct {
 
 	// Jenis transaksi
 	// jual / sewa
-	SaleType string `json:"sale_type"`
+	SaleType string `json:"sale_type" binding:"required"`
 
 	// Metadata
 	CreatedAt time.Time `json:"created_at"`
 
 	// Relasi
-	CoverImageUrl  string `json:"cover_image_url"`
-	PropertyTypeId int    `json:"property_type_id"`
-	UserId         int    `json:"user_id"`
+	CoverImageUrl  *string `json:"cover_image_url"`
+	PropertyTypeId int     `json:"property_type_id" binding:"required"`
+	AgentId        int     `json:"user_id"`
 }

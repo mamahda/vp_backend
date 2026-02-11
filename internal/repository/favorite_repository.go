@@ -122,7 +122,7 @@ func (r *FavoriteRepository) FindAll(
 			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 			&p.Floors, &p.Garage, &p.Carport,
 			&p.Certificate, &p.YearConstructed,
-			&p.CreatedAt, &p.PropertyTypeId, &p.UserId,
+			&p.CreatedAt, &p.PropertyTypeId, &p.AgentId,
 		); err != nil {
 			return nil, err
 		}
@@ -132,4 +132,3 @@ func (r *FavoriteRepository) FindAll(
 
 	return properties, nil
 }
-

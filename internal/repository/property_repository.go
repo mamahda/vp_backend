@@ -34,7 +34,7 @@ func (r *PropertyRepository) Create(
 		INSERT INTO properties
 		(title, description, price, status, province, regency, district, address,
 		building_area, land_area, electricity, water_source, bedrooms, bathrooms,
-		floors, garage, carport, certificate, year_constructed, sale_type, property_type_id, user_id)
+		floors, garage, carport, certificate, year_constructed, sale_type, property_type_id, agent_id)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
@@ -46,9 +46,15 @@ func (r *PropertyRepository) Create(
 		p.LandArea, p.Electricity, p.WaterSource, p.Bedrooms,
 		p.Bathrooms, p.Floors, p.Garage, p.Carport,
 		p.Certificate, p.YearConstructed, p.SaleType,
-		p.PropertyTypeId, p.UserId,
+		p.PropertyTypeId, p.AgentId,
 	)
 
+	return err
+}
+
+func (r *PropertyRepository) UpdateCoverImage(ctx context.Context, id int, url string) error {
+	query := `UPDATE properties SET cover_image_url = ? WHERE id = ?`
+	_, err := r.DB.ExecContext(ctx, query, url, id)
 	return err
 }
 
@@ -80,7 +86,7 @@ func (r *PropertyRepository) FindAll(
 			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 			&p.Floors, &p.Garage, &p.Carport,
 			&p.Certificate, &p.YearConstructed, &p.SaleType,
-			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
+			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.AgentId,
 		); err != nil {
 			return nil, err
 		}
@@ -156,7 +162,7 @@ func (r *PropertyRepository) FindByID(
 		&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 		&p.Floors, &p.Garage, &p.Carport,
 		&p.Certificate, &p.YearConstructed, &p.SaleType,
-		&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
+		&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.AgentId,
 	)
 
 	if err == sql.ErrNoRows {
@@ -219,7 +225,7 @@ func (r *PropertyRepository) FindFiltered(
 			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 			&p.Floors, &p.Garage, &p.Carport,
 			&p.Certificate, &p.YearConstructed, &p.SaleType,
-			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.UserId,
+			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.AgentId,
 		); err != nil {
 			return nil, fmt.Errorf("scan error: %w", err)
 		}
