@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"vp_backend/internal/config"
@@ -11,6 +10,7 @@ import (
 	"vp_backend/internal/service"
 	"vp_backend/internal/storage"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -107,7 +107,10 @@ func main() {
 		port = "8080"
 	}
 
-	fmt.Println("Server running on port", port)
+	c := cors.Config{
+		AllowAllOrigins: true,
+	}
+	r.Use(cors.New(c))
 
 	// Menjalankan HTTP server
 	r.Run(":" + port)
