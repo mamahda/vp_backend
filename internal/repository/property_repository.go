@@ -53,6 +53,27 @@ func (r *PropertyRepository) Create(
 }
 
 
+func (r *PropertyRepository) FindPropertyImagesUrl(ctx context.Context, propertyID int) ([]string, error) {
+	var images []string
+	// Contoh query menggunakan GORM atau SQL biasa
+	// SELECT url FROM property_images WHERE property_id = ?
+	query := "SELECT url FROM property_images WHERE property_id = ?"
+	rows, err := r.DB.QueryContext(ctx, query, propertyID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var path string
+		if err := rows.Scan(&path); err != nil {
+			return nil, err
+		}
+		images = append(images, path)
+	}
+	return images, nil
+}
+
 // FindAll mengambil seluruh data properti
 // tanpa filter.
 func (r *PropertyRepository) FindAll(

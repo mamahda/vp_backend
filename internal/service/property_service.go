@@ -27,6 +27,14 @@ func (s *PropertyService) Create(
 }
 
 
+func (s *PropertyService) GetPropertyImages(
+	ctx context.Context,
+	id int,
+) ([]string, error) {
+
+	return s.PropertyRepo.FindPropertyImagesUrl(ctx, id)
+}
+
 // GetByID mengambil detail properti
 // berdasarkan ID properti.
 func (s *PropertyService) GetByID(
