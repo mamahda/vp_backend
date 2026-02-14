@@ -44,8 +44,8 @@ type PropertyFilters struct {
 	SortBy string `form:"sort"`
 
 	// Pagination
-	Page  int `form:"page" binding:"required"`
-	Limit int `form:"limit" binding:"required"`
+	Page  int `form:"page"`
+	Limit int `form:"limit"`
 
 	// Offset digunakan secara internal
 	// (tidak diambil dari request)

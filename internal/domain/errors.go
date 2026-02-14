@@ -40,5 +40,10 @@ var (
 	// Biasanya dipetakan ke:
 	// HTTP 500 Internal Server Error
 	ErrInternalServer = errors.New("internal server error")
-)
 
+	// Error validasi file
+	ErrFileTooLarge    = errors.New("ukuran file terlalu besar, maksimal adalah 5MB")
+	ErrInvalidFileType = errors.New("format file tidak diizinkan, hanya menerima JPG, PNG, JPEG, atau WEBP")
+	ErrOpenFile        = errors.New("gagal membuka file untuk divalidasi")
+	ErrReadFile        = errors.New("gagal membaca konten file")
+)

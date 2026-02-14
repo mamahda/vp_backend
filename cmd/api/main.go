@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"time"
 
 	"vp_backend/internal/config"
 	"vp_backend/internal/delivery/http"
@@ -38,6 +39,24 @@ func main() {
 	// STATIC FILES (GLOBAL)
 	// ==========================
 	r.Static("/static", "./public/uploads")
+
+	config := cors.Config{
+		// Hanya izinkan domain frontend resmi kamu
+		AllowOrigins: []string{
+			"http://localhost:3000",         // Local development
+			"https://victoria-properti.com", // Production
+		},
+		// Batasi method yang boleh digunakan
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		// Batasi header yang boleh dikirim oleh frontend
+		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+		// Izinkan browser mengirim Cookie atau Auth Header
+		AllowCredentials: true,
+		// Berapa lama browser boleh menyimpan izin ini (biar gak OPTIONS terus)
+		MaxAge: 12 * time.Hour,
+	}
+
+	r.Use(cors.New(config))
 
 	propertyStorage := storage.NewLocalStorage("./public/uploads", "/static")
 
