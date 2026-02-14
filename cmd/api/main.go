@@ -126,11 +126,6 @@ func main() {
 		port = "8080"
 	}
 
-	c := cors.Config{
-		AllowAllOrigins: true,
-	}
-	r.Use(cors.New(c))
-
 	// Menjalankan HTTP server
 	r.Run(":" + port)
 }
