@@ -113,15 +113,14 @@ func (h *PropertyHandler) GetCountData(c *gin.Context) {
 	// Binding query parameter ke struct filter
 	filters := new(domain.PropertyFilters)
 	if err := c.ShouldBindQuery(filters); err != nil {
-		// c.JSON(
-		// 	http.StatusBadRequest,
-		// 	gin.H{
-		// 		"success": false,
-		// 		"message": "invalid query parameter format",
-		// 	},
-		// )
-		// return
-		filters = nil
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"success": false,
+				"message": "invalid query parameter format",
+			},
+		)
+		return
 	}
 
 	// Menghitung properti berdasarkan filter
