@@ -14,6 +14,7 @@ type Handler struct {
 	UserHandler     *handler.UserHandler
 	PropertyHandler *handler.PropertyHandler
 	FavoriteHandler *handler.FavoriteHandler
+	ImageHandler		*handler.ImageHandler
 }
 
 // RegisterRoutes mendaftarkan seluruh endpoint HTTP
@@ -88,7 +89,7 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 			// (hanya dapat diakses oleh agent/admin)
 			protectedAgent.POST("/properties", h.PropertyHandler.Create)
 
-			protectedAgent.POST("/properties/:id/images", h.PropertyHandler.UploadImages)
+			protectedAgent.POST("/properties/:id/images", h.ImageHandler.UploadImages)
 
 			// Endpoint untuk memperbarui data properti berdasarkan ID
 			protectedAgent.PUT("/properties/:id", h.PropertyHandler.Update)

@@ -52,17 +52,6 @@ func (r *PropertyRepository) Create(
 	return err
 }
 
-func (r *PropertyRepository) UpdateCoverImage(ctx context.Context, id int, url string) error {
-	query := `UPDATE properties SET cover_image_url = ? WHERE id = ?`
-	_, err := r.DB.ExecContext(ctx, query, url, id)
-	return err
-}
-
-func (r *PropertyRepository) SaveImage(ctx context.Context, propertyID int, url string) error {
-	query := "INSERT INTO property_images (url, property_id) VALUES (?, ?)"
-	_, err := r.DB.ExecContext(ctx, query, url, propertyID)
-	return err
-}
 
 // FindAll mengambil seluruh data properti
 // tanpa filter.

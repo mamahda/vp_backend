@@ -69,6 +69,7 @@ func main() {
 	userRepo := &repository.UserRepository{DB: db}
 	propertyRepo := &repository.PropertyRepository{DB: db}
 	favoriteRepo := &repository.FavoriteRepository{DB: db}
+	imageRepo := &repository.ImageRepository{DB: db}
 
 	// ==========================
 	// SERVICE INITIALIZATION
@@ -79,6 +80,7 @@ func main() {
 	userService := &service.UserService{UserRepo: userRepo}
 	propertyService := &service.PropertyService{PropertyRepo: propertyRepo, Storage: propertyStorage}
 	favoriteService := &service.FavoriteService{FavoriteRepo: favoriteRepo}
+	imageService := &service.ImageService{ImageRepo: imageRepo}
 
 	// ==========================
 	// HANDLER INITIALIZATION
@@ -90,6 +92,8 @@ func main() {
 	userHandler := &handler.UserHandler{UserService: userService}
 	propertyHandler := &handler.PropertyHandler{PropertyService: propertyService}
 	favoriteHandler := &handler.FavoriteHandler{FavoriteService: favoriteService}
+	imageHandler := &handler.ImageHandler{ImageService: imageService}
+
 
 	// ==========================
 	// INJECT SERVICES TO CONTEXT
@@ -111,6 +115,7 @@ func main() {
 		UserHandler:     userHandler,
 		PropertyHandler: propertyHandler,
 		FavoriteHandler: favoriteHandler,
+		ImageHandler:		 imageHandler,
 	}
 
 	// Mendaftarkan seluruh endpoint API
