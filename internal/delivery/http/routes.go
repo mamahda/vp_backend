@@ -14,7 +14,7 @@ type Handler struct {
 	UserHandler     *handler.UserHandler
 	PropertyHandler *handler.PropertyHandler
 	FavoriteHandler *handler.FavoriteHandler
-	ImageHandler		*handler.ImageHandler
+	ImageHandler    *handler.ImageHandler
 }
 
 // RegisterRoutes mendaftarkan seluruh endpoint HTTP
@@ -51,8 +51,6 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 
 	// Endpoint untuk mengambil detail properti berdasarkan ID
 	api.GET("/properties/:id", h.PropertyHandler.GetByID)
-
-	api.GET("/properties/:id/images", h.PropertyHandler.GetAllImages)
 
 	// ==========================
 	// PROTECTED ROUTES (JWT)
