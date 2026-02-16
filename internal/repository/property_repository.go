@@ -34,7 +34,7 @@ func (r *PropertyRepository) Create(
 		INSERT INTO properties
 		(title, description, price, status, province, regency, district, address,
 		building_area, land_area, electricity, water_source, bedrooms, bathrooms,
-		floors, garage, carport, certificate, year_constructed, sale_type, property_type_id, agent_id)
+		floors, garage, carport, certificate, year_constructed, sale_type, latitude, longitude, property_type_id, agent_id)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
@@ -45,7 +45,7 @@ func (r *PropertyRepository) Create(
 		p.Regency, p.District, p.Address, p.BuildingArea,
 		p.LandArea, p.Electricity, p.WaterSource, p.Bedrooms,
 		p.Bathrooms, p.Floors, p.Garage, p.Carport,
-		p.Certificate, p.YearConstructed, p.SaleType,
+		p.Certificate, p.YearConstructed, p.SaleType, p.Latitude, p.Longitude,
 		p.PropertyTypeId, p.AgentId,
 	)
 
@@ -73,7 +73,7 @@ func (r *PropertyRepository) FindAll(
 			&p.BuildingArea, &p.LandArea, &p.Electricity,
 			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 			&p.Floors, &p.Garage, &p.Carport,
-			&p.Certificate, &p.YearConstructed, &p.SaleType,
+			&p.Certificate, &p.YearConstructed, &p.SaleType, &p.Latitude, &p.Longitude,
 			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.AgentId,
 		); err != nil {
 			return nil, err
@@ -107,8 +107,8 @@ func (r *PropertyRepository) Update(
 		p.Regency, p.District, p.Address, p.BuildingArea,
 		p.LandArea, p.Electricity, p.WaterSource,
 		p.Bedrooms, p.Bathrooms, p.Floors,
-		p.Garage, p.Carport, p.Certificate,
-		p.YearConstructed, p.SaleType, p.CoverImageUrl, p.PropertyTypeId, p.ID,
+		p.Garage, p.Carport, p.Certificate, p.YearConstructed, p.SaleType,
+		p.Latitude, p.Longitude, p.CoverImageUrl, p.PropertyTypeId, p.ID,
 	)
 
 	return err
@@ -149,7 +149,7 @@ func (r *PropertyRepository) FindByID(
 		&p.BuildingArea, &p.LandArea, &p.Electricity,
 		&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 		&p.Floors, &p.Garage, &p.Carport,
-		&p.Certificate, &p.YearConstructed, &p.SaleType,
+		&p.Certificate, &p.YearConstructed, &p.SaleType, &p.Latitude, &p.Longitude,
 		&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.AgentId,
 	)
 
@@ -212,7 +212,7 @@ func (r *PropertyRepository) FindFiltered(
 			&p.BuildingArea, &p.LandArea, &p.Electricity,
 			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
 			&p.Floors, &p.Garage, &p.Carport,
-			&p.Certificate, &p.YearConstructed, &p.SaleType,
+			&p.Certificate, &p.YearConstructed, &p.SaleType, &p.Latitude, &p.Longitude,
 			&p.CreatedAt, &p.CoverImageUrl, &p.PropertyTypeId, &p.AgentId,
 		); err != nil {
 			return nil, fmt.Errorf("scan error: %w", err)

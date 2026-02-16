@@ -51,6 +51,10 @@ type Property struct {
 	// jual / sewa
 	SaleType string `json:"sale_type" binding:"required"`
 
+	// Titik Koordinat
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+
 	// Metadata
 	CreatedAt time.Time `json:"created_at"`
 
