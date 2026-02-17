@@ -51,3 +51,25 @@ func (h *ImageHandler) UploadImages(c *gin.Context) {
 	)
 }
 
+func (h *ImageHandler) RemoveImage(c *gin.Context) {
+	imageId, _ := strconv.Atoi(c.Param("id"))
+
+	err := h.ImageService.RemovePropertyImage(c.Request.Context(), imageId)
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
+		return
+	}
+
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"success": true,
+			"message": "Remove Berhasil",
+		},
+	)
+}

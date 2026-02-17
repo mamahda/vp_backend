@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-
 	// "vp_backend/internal/domain"
 )
 
@@ -20,8 +19,14 @@ func (r *ImageRepository) UpdateCoverImage(ctx context.Context, id int, url stri
 	return err
 }
 
-func (r *ImageRepository) SaveImage(ctx context.Context, propertyID int, url string) error {
+func (r *ImageRepository) SaveImage(ctx context.Context, propertyId int, url string) error {
 	query := "INSERT INTO property_images (url, property_id) VALUES (?, ?)"
-	_, err := r.DB.ExecContext(ctx, query, url, propertyID)
+	_, err := r.DB.ExecContext(ctx, query, url, propertyId)
+	return err
+}
+
+func (r *ImageRepository) DeleteImage(ctx context.Context, imageId int) error {
+	query := "DELETE FROM property_images WHERE id = ?;)"
+	_, err := r.DB.ExecContext(ctx, query, imageId)
 	return err
 }

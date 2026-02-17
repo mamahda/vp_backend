@@ -13,8 +13,8 @@ import (
 // PropertyService menangani business logic
 // yang berkaitan dengan data properti.
 type ImageService struct {
-	ImageRepo 	*repository.ImageRepository
-	Storage      storage.Storage
+	ImageRepo *repository.ImageRepository
+	Storage   storage.Storage
 }
 
 func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, files []*multipart.FileHeader) error {
@@ -22,7 +22,7 @@ func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, fi
 	allowedTypes := map[string]bool{
 		"image/jpeg": true,
 		"image/png":  true,
-		"image/webp": true, // Opsional: format web modern
+		"image/webp": true,
 		"image/jpg":  true,
 	}
 
@@ -81,6 +81,14 @@ func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, fi
 		if err := s.ImageRepo.SaveImage(ctx, propertyId, webURL); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (s *ImageService) RemovePropertyImage(ctx context.Context, imageId int) error {
+	// Definisi whitelist tipe file yang diizinkan
+	if err := s.ImageRepo.DeleteImage(ctx, imageId); err != nil {
+		return err
 	}
 	return nil
 }
