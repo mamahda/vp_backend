@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"log"
 	"mime/multipart"
 	"net/http"
 
@@ -13,8 +14,9 @@ import (
 // PropertyService menangani business logic
 // yang berkaitan dengan data properti.
 type ImageService struct {
-	ImageRepo *repository.ImageRepository
-	Storage   storage.Storage
+	ImageRepo    *repository.ImageRepository
+	PropertyRepo *repository.PropertyRepository
+	Storage      storage.Storage
 }
 
 func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, files []*multipart.FileHeader) error {
@@ -86,9 +88,41 @@ func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, fi
 }
 
 func (s *ImageService) RemovePropertyImage(ctx context.Context, imageId int) error {
-	// Definisi whitelist tipe file yang diizinkan
-	if err := s.ImageRepo.DeleteImage(ctx, imageId); err != nil {
+	// 1. Ambil info gambar & properti terkait dari DB
+	image, err := s.ImageRepo.GetImageByID(ctx, imageId)
+	if err != nil {
+		return err // misal: data tidak ditemukan
+	}
+
+	// 2. Cek apakah gambar ini adalah COVER di tabel properties
+	property, err := s.PropertyRepo.FindByID(ctx, image.PropertyID)
+	isCover := (property.CoverImageUrl == image.Url)
+
+	// 3. HAPUS FILE FISIK (Storage Layer)
+	// Gunakan fungsi storage untuk hapus file di folder public/uploads/...
+	err = s.Storage.Delete(image.Url)
+	if err != nil {
+		// Log error tapi lanjutkan hapus DB agar tidak terjadi data orphan
+		log.Printf("Gagal hapus file fisik: %v", err)
+	}
+
+	// 4. HAPUS DATA DI DATABASE (property_images)
+	err = s.ImageRepo.DeleteImage(ctx, imageId)
+	if err != nil {
 		return err
 	}
+
+	// 5. HANDLING JIKA GAMBAR ADALAH COVER
+	if isCover {
+		// Set cover image menjadi string kosong (null)
+		newCover := ""
+
+		// Update tabel properties (Set NULL atau Set gambar baru)
+		err = s.ImageRepo.UpdateCoverImage(ctx, image.PropertyID, newCover)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

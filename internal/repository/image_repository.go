@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"vp_backend/internal/domain"
 	// "vp_backend/internal/domain"
 )
 
@@ -26,7 +28,20 @@ func (r *ImageRepository) SaveImage(ctx context.Context, propertyId int, url str
 }
 
 func (r *ImageRepository) DeleteImage(ctx context.Context, imageId int) error {
-	query := "DELETE FROM property_images WHERE id = ?;)"
+	query := "DELETE FROM property_images WHERE id = ?"
 	_, err := r.DB.ExecContext(ctx, query, imageId)
 	return err
+}
+
+func (r *ImageRepository) GetImageByID(ctx context.Context, imageId int) (*domain.PropertyImage, error) {
+	query := "SELECT * FROM property_images WHERE id = ?"
+
+	i := domain.PropertyImage{}
+	err := r.DB.QueryRowContext(ctx, query, imageId).Scan(&i.ID, &i.Url, &i.PropertyID)
+
+	if err == sql.ErrNoRows {
+		return nil, errors.New("image not found")
+	}
+
+	return &i, err
 }

@@ -1,11 +1,13 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -38,6 +40,41 @@ func (l *localStorage) Upload(file *multipart.FileHeader, folder string) (string
 
 	// 4. Balikkan URL untuk disimpan di DB nanti
 	return fmt.Sprintf("%s/%s/%s", l.baseUrl, folder, fileName), nil
+}
+
+func (l *localStorage) Delete(imageUrl string) error {
+	// 1. Validasi: Pastikan URL diawali dengan BaseURL yang benar
+	// Misal: imageUrl "/static/img/a.jpg" harus diawali "/static"
+	if !strings.HasPrefix(imageUrl, l.baseUrl) {
+		// Jika URL beda (misal link external), abaikan atau return error
+		return errors.New("invalid image url: url does not match storage base url")
+	}
+
+	// 2. Hapus BaseURL dari string untuk mendapatkan relative path
+	// Contoh Input: "/static/properties/abc.jpg"
+	// l.baseUrl:    "/static"
+	// Hasil:        "/properties/abc.jpg"
+	relativePath := strings.TrimPrefix(imageUrl, l.baseUrl)
+
+	// 3. Konversi ke Path Sistem Operasi
+	// filepath.Join otomatis menangani "/" (Linux) atau "\" (Windows)
+	// l.publicPath: "./public/uploads"
+	// Hasil Akhir:  "public/uploads/properties/abc.jpg"
+	fullPath := filepath.Join(l.publicPath, relativePath)
+
+	// 4. Cek Keberadaan File (Best Practice: Idempotency)
+	// Jika file sudah tidak ada, anggap sukses (return nil).
+	// Jangan return error supaya logic di Service tidak panik.
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		return nil
+	}
+
+	// 5. Eksekusi Hapus
+	if err := os.Remove(fullPath); err != nil {
+		return fmt.Errorf("failed to delete file: %w", err)
+	}
+
+	return nil
 }
 
 func saveFile(file *multipart.FileHeader, dst string) error {

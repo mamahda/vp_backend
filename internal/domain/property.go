@@ -59,7 +59,7 @@ type Property struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	// Relasi
-	CoverImageUrl  *string `json:"cover_image_url"`
-	PropertyTypeId int     `json:"property_type_id" binding:"required"`
-	AgentId        int     `json:"user_id"`
+	CoverImageUrl  string `json:"cover_image_url"`
+	PropertyTypeId int    `json:"property_type_id" binding:"required"`
+	AgentId        int    `json:"user_id"`
 }

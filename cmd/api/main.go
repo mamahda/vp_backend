@@ -58,7 +58,7 @@ func main() {
 
 	r.Use(cors.New(config))
 
-	propertyStorage := storage.NewLocalStorage("./public/uploads", "/static")
+	imageStorage := storage.NewLocalStorage("./public/uploads", "/static")
 
 	// ==========================
 	// REPOSITORY INITIALIZATION
@@ -78,9 +78,9 @@ func main() {
 	// Service berisi business logic aplikasi
 	authService := &service.AuthService{UserRepo: userRepo}
 	userService := &service.UserService{UserRepo: userRepo}
-	propertyService := &service.PropertyService{PropertyRepo: propertyRepo, Storage: propertyStorage}
+	propertyService := &service.PropertyService{PropertyRepo: propertyRepo}
 	favoriteService := &service.FavoriteService{FavoriteRepo: favoriteRepo}
-	imageService := &service.ImageService{ImageRepo: imageRepo}
+	imageService := &service.ImageService{ImageRepo: imageRepo, PropertyRepo: propertyRepo, Storage: imageStorage}
 
 	// ==========================
 	// HANDLER INITIALIZATION
@@ -93,7 +93,6 @@ func main() {
 	propertyHandler := &handler.PropertyHandler{PropertyService: propertyService}
 	favoriteHandler := &handler.FavoriteHandler{FavoriteService: favoriteService}
 	imageHandler := &handler.ImageHandler{ImageService: imageService}
-
 
 	// ==========================
 	// INJECT SERVICES TO CONTEXT
@@ -115,7 +114,7 @@ func main() {
 		UserHandler:     userHandler,
 		PropertyHandler: propertyHandler,
 		FavoriteHandler: favoriteHandler,
-		ImageHandler:		 imageHandler,
+		ImageHandler:    imageHandler,
 	}
 
 	// Mendaftarkan seluruh endpoint API

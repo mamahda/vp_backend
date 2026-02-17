@@ -7,14 +7,12 @@ import (
 
 	"vp_backend/internal/domain"
 	"vp_backend/internal/repository"
-	"vp_backend/internal/storage"
 )
 
 // PropertyService menangani business logic
 // yang berkaitan dengan data properti.
 type PropertyService struct {
 	PropertyRepo *repository.PropertyRepository
-	Storage      storage.Storage
 }
 
 // Create menyimpan data properti baru ke database.
