@@ -47,7 +47,7 @@ create table if not exists properties (
     year_constructed int not null,
     sale_type varchar(20) not null,
     latitude DECIMAL(10, 8) NOT NULL,  -- Contoh: -6.20000000
-    longitude DECIMAL(11, 8) NOT NULL  -- Contoh: 106.81666600
+    longitude DECIMAL(11, 8) NOT NULL,  -- Contoh: 106.81666600
     created_at timestamp default current_timestamp,
     cover_image_url varchar (100) not null, 
     property_type_id int not null,
