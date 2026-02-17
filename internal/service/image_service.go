@@ -126,3 +126,7 @@ func (s *ImageService) RemovePropertyImage(ctx context.Context, imageId int, pro
 
 	return nil
 }
+
+func (s *ImageService) GetAllPropertyImages(ctx context.Context, propertyId int) ([]domain.PropertyImage, error) {
+	return s.ImageRepo.FindAllPropertyImages(ctx, propertyId)
+}

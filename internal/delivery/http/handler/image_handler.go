@@ -74,3 +74,29 @@ func (h *ImageHandler) RemoveImage(c *gin.Context) {
 		},
 	)
 }
+
+func (h *ImageHandler) GetAllImages(c *gin.Context) {
+	propertyId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "ID properti tidak valid",
+		})
+		return
+	}
+
+	data, err := h.ImageService.GetAllPropertyImages(c.Request.Context(), propertyId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "Gagal mengambil data: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Data gambar berhasil diambil", // Perbaikan pesan
+		"data":    data,
+	})
+}

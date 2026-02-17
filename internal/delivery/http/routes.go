@@ -52,6 +52,8 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 	// Endpoint untuk mengambil detail properti berdasarkan ID
 	api.GET("/properties/:id", h.PropertyHandler.GetByID)
 
+	api.GET("/properties/:id/images", h.ImageHandler.GetAllImages)
+
 	// ==========================
 	// PROTECTED ROUTES (JWT)
 	// ==========================
