@@ -315,7 +315,14 @@ func (h *PropertyHandler) Update(c *gin.Context) {
 func (h *PropertyHandler) Delete(c *gin.Context) {
 
 	// Mengambil ID properti dari URL parameter
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "ID tidak valid",
+		})
+		return
+	}
 
 	// Menghapus properti melalui service
 	if err := h.PropertyService.Delete(

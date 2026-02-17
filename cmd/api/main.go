@@ -78,7 +78,7 @@ func main() {
 	// Service berisi business logic aplikasi
 	authService := &service.AuthService{UserRepo: userRepo}
 	userService := &service.UserService{UserRepo: userRepo}
-	propertyService := &service.PropertyService{PropertyRepo: propertyRepo}
+	propertyService := &service.PropertyService{PropertyRepo: propertyRepo, ImageRepo: imageRepo, Storage: imageStorage}
 	favoriteService := &service.FavoriteService{FavoriteRepo: favoriteRepo}
 	imageService := &service.ImageService{ImageRepo: imageRepo, PropertyRepo: propertyRepo, Storage: imageStorage}
 

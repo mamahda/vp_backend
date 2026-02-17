@@ -120,9 +120,17 @@ func (r *PropertyRepository) Delete(
 	ctx context.Context,
 	id int,
 ) error {
+	res, err := r.DB.ExecContext(ctx, `DELETE FROM properties WHERE id = ?`, id)
+	if err != nil {
+		return err
+	}
 
-	_, err := r.DB.ExecContext(ctx, `DELETE FROM properties WHERE id = ?`, id)
-	return err
+	rows, _ := res.RowsAffected()
+	if rows == 0 {
+		return errors.New("properti tidak ditemukan")
+	}
+
+	return nil
 }
 
 // FindByID mengambil satu data properti
