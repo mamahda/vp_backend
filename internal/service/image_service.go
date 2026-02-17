@@ -87,9 +87,9 @@ func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, fi
 	return nil
 }
 
-func (s *ImageService) RemovePropertyImage(ctx context.Context, imageId int) error {
+func (s *ImageService) RemovePropertyImage(ctx context.Context, imageId int, propertyId int) error {
 	// 1. Ambil info gambar & properti terkait dari DB
-	image, err := s.ImageRepo.GetImageByID(ctx, imageId)
+	image, err := s.ImageRepo.GetImageByID(ctx, imageId, propertyId)
 	if err != nil {
 		return err // misal: data tidak ditemukan
 	}

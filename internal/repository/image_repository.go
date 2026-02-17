@@ -33,11 +33,11 @@ func (r *ImageRepository) DeleteImage(ctx context.Context, imageId int) error {
 	return err
 }
 
-func (r *ImageRepository) GetImageByID(ctx context.Context, imageId int) (*domain.PropertyImage, error) {
-	query := "SELECT * FROM property_images WHERE id = ?"
+func (r *ImageRepository) GetImageByID(ctx context.Context, imageId int, propertyId int) (*domain.PropertyImage, error) {
+	query := "SELECT * FROM property_images WHERE id = ? AND property_id = ?"
 
 	i := domain.PropertyImage{}
-	err := r.DB.QueryRowContext(ctx, query, imageId).Scan(&i.ID, &i.Url, &i.PropertyID)
+	err := r.DB.QueryRowContext(ctx, query, imageId, propertyId).Scan(&i.ID, &i.Url, &i.PropertyID)
 
 	if err == sql.ErrNoRows {
 		return nil, errors.New("image not found")

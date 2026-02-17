@@ -91,7 +91,7 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 
 			protectedAgent.POST("/properties/:id/images", h.ImageHandler.UploadImages)
 
-			protectedAgent.DELETE("/properties/:id/image", h.ImageHandler.RemoveImage)
+			protectedAgent.DELETE("/properties/:id/images/:image_id", h.ImageHandler.RemoveImage)
 
 			// Endpoint untuk memperbarui data properti berdasarkan ID
 			protectedAgent.PUT("/properties/:id", h.PropertyHandler.Update)
