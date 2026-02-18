@@ -47,7 +47,7 @@ func main() {
 			"https://victoria-properti.com", // Production
 		},
 		// Batasi method yang boleh digunakan
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
 		// Batasi header yang boleh dikirim oleh frontend
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
 		// Izinkan browser mengirim Cookie atau Auth Header

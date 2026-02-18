@@ -67,7 +67,7 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 		protected.GET("/profile", h.UserHandler.GetProfile)
 
 		// Endpoint untuk memperbarui data profil user
-		protected.PUT("/profile", h.UserHandler.UpdateProfile)
+		protected.PATCH("/profile", h.UserHandler.UpdateProfile)
 
 		// Endpoint untuk menambahkan properti ke daftar favorit user
 		protected.POST("/properties/:id/favorite", h.FavoriteHandler.AddToFavorites)
@@ -96,7 +96,9 @@ func RegisterRoutes(r *gin.Engine, h Handler) {
 			protectedAgent.DELETE("/properties/:id/images/:image_id", h.ImageHandler.RemoveImage)
 
 			// Endpoint untuk memperbarui data properti berdasarkan ID
-			protectedAgent.PUT("/properties/:id", h.PropertyHandler.Update)
+			protectedAgent.PATCH("/properties/:id", h.PropertyHandler.Update)
+
+			protectedAgent.PATCH("/properties/:id/images/:image_id", h.ImageHandler.UpdateCover)
 
 			// Endpoint untuk menghapus properti berdasarkan ID
 			protectedAgent.DELETE("/properties/:id", h.PropertyHandler.Delete)

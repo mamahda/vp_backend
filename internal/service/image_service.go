@@ -28,7 +28,7 @@ func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, fi
 		"image/jpg":  true,
 	}
 
-	for i, file := range files {
+	for _, file := range files {
 		// --- SECURITY CHECK START ---
 
 		// 1. Validasi Ukuran File (Opsional tapi disarankan, misal max 5MB)
@@ -72,12 +72,12 @@ func (s *ImageService) AddPropertyImages(ctx context.Context, propertyId int, fi
 		}
 
 		// STEP B: Jika ini adalah foto pertama (indeks 0), update tabel 'properties'
-		if i == 0 {
-			// Kita panggil repo untuk update kolom cover_image_url di tabel utama
-			if err := s.ImageRepo.UpdateCoverImage(ctx, propertyId, webURL); err != nil {
-				return err
-			}
-		}
+		// if i == 0 {
+		// 	// Kita panggil repo untuk update kolom cover_image_url di tabel utama
+		// 	if err := s.ImageRepo.UpdateCoverImage(ctx, propertyId, webURL); err != nil {
+		// 		return err
+		// 	}
+		// }
 
 		// STEP C: Simpan SEMUA URL ke tabel galeri 'property_images' (untuk slider/detail)
 		if err := s.ImageRepo.SaveImage(ctx, propertyId, webURL); err != nil {
@@ -129,4 +129,18 @@ func (s *ImageService) RemovePropertyImage(ctx context.Context, imageId int, pro
 
 func (s *ImageService) GetAllPropertyImages(ctx context.Context, propertyId int) ([]domain.PropertyImage, error) {
 	return s.ImageRepo.FindAllPropertyImages(ctx, propertyId)
+}
+
+func (s *ImageService) UpdateCoverImage(ctx context.Context, propertyId int, imageId int) error {
+	image, err := s.ImageRepo.GetImageByID(ctx, imageId, propertyId)
+	if err != nil {
+		return err
+	}
+
+	err = s.ImageRepo.UpdateCoverImage(ctx, propertyId, image.Url)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

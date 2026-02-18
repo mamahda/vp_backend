@@ -100,3 +100,32 @@ func (h *ImageHandler) GetAllImages(c *gin.Context) {
 		"data":    data,
 	})
 }
+
+func (h *ImageHandler) UpdateCover(c *gin.Context){
+	propertyId, err := strconv.Atoi(c.Param("id"))
+	imageId, err := strconv.Atoi(c.Param("image_id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Image ID tidak valid",
+		})
+		return
+	}
+
+	err = h.ImageService.UpdateCoverImage(c.Request.Context(), propertyId, imageId)
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Cover Image berhasil diperbarui", // Perbaikan pesan
+	})
+}
