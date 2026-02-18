@@ -53,7 +53,7 @@ func (h *ImageHandler) UploadImages(c *gin.Context) {
 
 func (h *ImageHandler) RemoveImage(c *gin.Context) {
 	imageId, _ := strconv.Atoi(c.Param("image_id"))
-	propertyId, _ := strconv.Atoi(c.Param("image_id"))
+	propertyId, _ := strconv.Atoi(c.Param("id"))
 
 	err := h.ImageService.RemovePropertyImage(c.Request.Context(), imageId, propertyId)
 	if err != nil {
@@ -101,7 +101,7 @@ func (h *ImageHandler) GetAllImages(c *gin.Context) {
 	})
 }
 
-func (h *ImageHandler) UpdateCover(c *gin.Context){
+func (h *ImageHandler) UpdateCover(c *gin.Context) {
 	propertyId, err := strconv.Atoi(c.Param("id"))
 	imageId, err := strconv.Atoi(c.Param("image_id"))
 
