@@ -5,6 +5,7 @@ import (
 
 	"vp_backend/internal/domain"
 	"vp_backend/internal/repository"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // UserService menangani business logic
@@ -34,9 +35,17 @@ func (s *UserService) UpdateUser(
 	username string,
 	email string,
 	phone string,
+	password string,
 ) error {
 
 	user, err := s.UserRepo.FindByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(password),
+		bcrypt.DefaultCost,
+	)
 	if err != nil {
 		return err
 	}
@@ -44,6 +53,7 @@ func (s *UserService) UpdateUser(
 	user.Username = username
 	user.Email = email
 	user.Phone = phone
+	user.Password = string(hashedPassword)
 
 	return s.UserRepo.Update(ctx, user)
 }

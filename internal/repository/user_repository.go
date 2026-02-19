@@ -65,7 +65,7 @@ func (r *UserRepository) FindByEmail(
 ) (*domain.User, error) {
 
 	query := `
-		SELECT id, email, password, username, role_id
+		SELECT id, email, password, phone_number, username, role_id
 		FROM users
 		WHERE email = ?
 	`
@@ -75,6 +75,7 @@ func (r *UserRepository) FindByEmail(
 		&user.ID,
 		&user.Email,
 		&user.Password,
+		&user.Phone,
 		&user.Username,
 		&user.Role_ID,
 	)
@@ -98,7 +99,7 @@ func (r *UserRepository) FindByID(
 ) (*domain.User, error) {
 
 	query := `
-		SELECT id, email, password, username, role_id
+		SELECT id, email, password, phone_number, username, role_id
 		FROM users
 		WHERE id = ?
 	`
@@ -108,6 +109,7 @@ func (r *UserRepository) FindByID(
 		&user.ID,
 		&user.Email,
 		&user.Password,
+		&user.Phone,
 		&user.Username,
 		&user.Role_ID,
 	)
@@ -130,7 +132,7 @@ func (r *UserRepository) Update(
 
 	query := `
 		UPDATE users
-		SET username = ?, email = ?, phone_number = ?
+		SET username = ?, email = ?, phone_number = ?, password = ?
 		WHERE id = ?
 	`
 
@@ -140,6 +142,7 @@ func (r *UserRepository) Update(
 		user.Username,
 		user.Email,
 		user.Phone,
+		user.Password,
 		user.ID,
 	)
 

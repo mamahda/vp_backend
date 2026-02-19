@@ -31,11 +31,11 @@ func (r *PropertyRepository) Create(
 ) error {
 
 	query := `
-		INSERT INTO properties
-		(title, description, price, status, province, regency, district, address,
-		building_area, land_area, electricity, water_source, bedrooms, bathrooms,
-		floors, garage, carport, certificate, year_constructed, sale_type, latitude, longitude, property_type_id, agent_id)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	INSERT INTO properties
+	(title, description, price, status, province, regency, district, address,
+	building_area, land_area, electricity, water_source, bedrooms, bathrooms,
+	floors, garage, carport, certificate, year_constructed, sale_type, latitude, longitude, property_type_id, agent_id)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	_, err := r.DB.ExecContext(
@@ -90,14 +90,14 @@ func (r *PropertyRepository) Update(
 	ctx context.Context,
 	p *domain.Property,
 ) error {
-
 	query := `
-		UPDATE properties SET
-		title=?, description=?, price=?, status=?, province=?, regency=?,
-		district=?, address=?, building_area=?, land_area=?, electricity=?,
-		water_source=?, bedrooms=?, bathrooms=?, floors=?, garage=?, carport=?,
-		certificate=?, year_constructed=?, sale_type=?, property_type_id=?
-		WHERE id=?
+	UPDATE properties SET
+	title=?, description=?, price=?, status=?, province=?, regency=?,
+	district=?, address=?, building_area=?, land_area=?, electricity=?,
+	water_source=?, bedrooms=?, bathrooms=?, floors=?, garage=?, carport=?,
+	certificate=?, year_constructed=?, sale_type=?, latitude=?, longitude=?,
+	cover_image_url=?, property_type_id=?
+	WHERE id=?
 	`
 
 	_, err := r.DB.ExecContext(
@@ -107,8 +107,9 @@ func (r *PropertyRepository) Update(
 		p.Regency, p.District, p.Address, p.BuildingArea,
 		p.LandArea, p.Electricity, p.WaterSource,
 		p.Bedrooms, p.Bathrooms, p.Floors,
-		p.Garage, p.Carport, p.Certificate, p.YearConstructed, p.SaleType,
-		p.Latitude, p.Longitude, p.CoverImageUrl, p.PropertyTypeId, p.ID,
+		p.Garage, p.Carport, p.Certificate, p.YearConstructed,
+		p.SaleType, p.Latitude, p.Longitude, p.CoverImageUrl,
+		p.PropertyTypeId, p.ID,
 	)
 
 	return err

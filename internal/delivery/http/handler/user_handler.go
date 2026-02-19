@@ -106,6 +106,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		Username string `json:"username"`
 		Email    string `json:"email"`
 		Phone    string `json:"phone"`
+		Password string `json:"password"`
 	}
 
 	// Binding request JSON
@@ -123,10 +124,11 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	// Memproses update profil melalui service
 	err := h.UserService.UpdateUser(
 		c.Request.Context(),
-		int(userID.(uint)),
+		userID.(int),
 		req.Username,
 		req.Email,
 		req.Phone,
+		req.Password,
 	)
 	if err != nil {
 		c.JSON(
