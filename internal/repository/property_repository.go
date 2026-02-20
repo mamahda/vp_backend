@@ -35,7 +35,7 @@ func (r *PropertyRepository) Create(
 	(title, description, price, status, province, regency, district, address,
 	building_area, land_area, electricity, water_source, bedrooms, bathrooms,
 	floors, garage, carport, certificate, year_constructed, sale_type, latitude, longitude, property_type_id, agent_id)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	_, err := r.DB.ExecContext(
