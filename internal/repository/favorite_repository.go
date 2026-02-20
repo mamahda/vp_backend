@@ -105,6 +105,7 @@ func (r *FavoriteRepository) FindAll(
         FROM properties p
         JOIN favorites f ON p.id = f.property_id
         WHERE f.user_id = ?
+		ORDER BY f.id DESC
     `
 
 	rows, err := r.DB.QueryContext(ctx, query, userID)
