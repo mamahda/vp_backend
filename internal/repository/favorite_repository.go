@@ -99,7 +99,9 @@ func (r *FavoriteRepository) FindAll(
             p.water_source, p.bedrooms, p.bathrooms,
             p.floors, p.garage, p.carport,
             p.certificate, p.year_constructed,
-            p.created_at, p.property_type_id, p.agent_id
+            p.sale_type, p.latitude, p.longitude,
+            p.created_at, p.cover_image_url,
+            p.property_type_id, p.agent_id
         FROM properties p
         JOIN favorites f ON p.id = f.property_id
         WHERE f.user_id = ?
@@ -118,11 +120,12 @@ func (r *FavoriteRepository) FindAll(
 		if err := rows.Scan(
 			&p.ID, &p.Title, &p.Description, &p.Price, &p.Status,
 			&p.Province, &p.Regency, &p.District, &p.Address,
-			&p.BuildingArea, &p.LandArea, &p.Electricity,
-			&p.WaterSource, &p.Bedrooms, &p.Bathrooms,
-			&p.Floors, &p.Garage, &p.Carport,
+			&p.BuildingArea, &p.LandArea, &p.Electricity, &p.WaterSource,
+			&p.Bedrooms, &p.Bathrooms, &p.Floors, &p.Garage, &p.Carport,
 			&p.Certificate, &p.YearConstructed,
-			&p.CreatedAt, &p.PropertyTypeId, &p.AgentId,
+			&p.SaleType, &p.Latitude, &p.Longitude,
+			&p.CreatedAt, &p.CoverImageUrl,
+			&p.PropertyTypeId, &p.AgentId,
 		); err != nil {
 			return nil, err
 		}
